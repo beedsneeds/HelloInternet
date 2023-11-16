@@ -1,0 +1,56 @@
+/* styles.css */
+
+/* scroll-behavior: smooth; */
+
+/* Center the content both horizontally and vertically */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0; /* Set a background color */
+}
+
+/* Add some styling to the content */
+.content {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+
+/* styles.css */
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three equal columns */
+    gap: 3px; /* Add some spacing between the images */
+    text-align: center; /* Center-align images within their containers */
+    width: 40%; /* Set the grid container width to 70% of the screen's width */
+    margin: 0 auto; /* Center the grid container horizontally on the screen */
+}
+
+.image {
+    position: relative; /* Add relative positioning to the image container */
+    /* border: 0.5px solid #ccc; */
+    padding: 2px; 
+}
+
+.image input[type="checkbox"] {
+    position: absolute; /* Position the checkbox absolutely */
+    top: 0; /* Adjust the top and left to position it where you want */
+    left: 0;
+    z-index: 1; /* Place the checkbox above the image */
+    opacity: 30; /* Hide the actual checkbox input */
+}
+
+.image img {
+    max-width: 100%;
+    height: auto;
+}
+

@@ -1,0 +1,30 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+
+
+{% block content %}
+    <h2>Right Section</h2>
+    <p>This is the content of the right section.</p>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="image-grid">
+
+        {% for slice in img_slice_list %}
+            <div class="image">
+                <label for="{{ slice }}"><img class="base-image" src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg" alt="Image {{ slice }}"></label>
+                <input type="checkbox" name="selected_images" id="{{ slice }}" value="{{ slice }}">
+            </div>
+        {% empty %}
+            <li>Sorry, no images in this captcha.</li>
+        {% endfor %}
+
+        </div>
+
+        <button class="button-container" type="submit">Submit Selection</button>
+    </form>
+{% endblock %}
+
+
+

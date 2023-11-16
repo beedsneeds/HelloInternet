@@ -1,0 +1,29 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+
+
+{% block content %}
+
+
+
+    <h2>List of Captcha</h2>
+    
+    <ul>
+        {% for image in captchalist %}
+            <li><a href="{{ image.get_absolute_url }}" class="button-link">{{image.prompt_text}}</a> <em class="muted-text"> ({{image.image_name}}.jpg) </em> </li>
+            {% empty %}
+            <p>No Captcha are available.</p>y
+        {% endfor %}
+        
+    </ul>
+
+    <hr>
+
+    <form action="goblin" method="post">
+        <label for="team_name">Enter name:</label>
+        <input id="team_name" type="text" name="name_field" value="Default name for team" />
+        <input type="submit" value="OK" />
+    </form>
+
+{% endblock %}

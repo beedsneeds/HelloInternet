@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test if your captcha solving skills are good</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'captchapractice/styles.css' %}">
+</head>
+<body>
+    
+
+    <div class="content">
+        <h1>Welcome to Your Website</h1>
+        <p>This is a simple HTML template.</p>
+        <a href="#">Learn More</a>
+
+        <!-- {% for images in img_slice_list %}
+            <li>{{ images }}</li>
+        {% empty %}
+            <li>Sorry, no athletes in this list.</li>
+        {% endfor %} -->
+
+
+    </div>
+
+    <form action="submit_selection" method="post">
+        {% csrf_token %} <!-- Add this if you're using Django's CSRF protection -->
+        <div class="image-grid"> 
+
+        {% for slice in img_slice_list %}
+            <div class="image">
+                <input type="checkbox" name="selected_images" id="{{ slice }}" value="{{ slice }}">
+                <label for="{{ slice }}"><img src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg" alt="Image {{ slice }}"></label>
+            </div>
+        {% empty %}
+            <li>Sorry, no images in this captcha.</li>
+        {% endfor %}
+
+        </div>
+        <button type="submit">Submit Selection</button>
+    </form>
+
+
+</body>
+</html>
+
+
+
+
+
