@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-from .utils import make_slices
+
 
 # Create your models here.
 
@@ -16,17 +16,24 @@ from .utils import make_slices
             (probably the most involved method compared to overriding the 
             'save' model method or creating a custom manager class)
 
+    Used signal again for validating image dimensions. 
+    What I tried:
+        overriding save() [method in ModelManager class]
+        overriding clean() [form validation that's run during save in admin page]
+        writing custom FileUploadHandler class in place of ImageField
+        validating ImageField with custom validator from within ImageField args
+        performing a pre-save signal based approach instead of post-save
+        admin.ModelAdmin: def response_add() - auto-chaining the model instance
+            creation process with creation of other models
+
+    What I didn't try:
+        Just writing custom views outside of django-admin, for my specific needs 
+
 '''
 
-class UploadImage(models.Model):
-    # image = models.ImageField(upload_to="captchapractice/media/user uploads/")
-    image = models.ImageField(upload_to="admin uploads/")
-    image_name = models.CharField(max_length=10, unique=True, help_text='Max image name length is 10 characters')
-    
-
-
 class CaptchaImage(models.Model):
-    image_name = models.CharField(max_length=10, unique=True, help_text='Enter an abbreviated image name (max length 10 characters)')
+    image = models.ImageField(upload_to="admin uploads/", null=True)  # MEDIA_ROOT/admin uploads/
+    image_name = models.CharField(max_length=10, unique=True, help_text='Enter an abbreviated image name (max length 10 characters). Do not include an extension')
     prompt_text = models.CharField(max_length=200, help_text='The prompt the user sees. Eg: "Select all the cars in the image" ') 
 
     SLICE_CHOICES = [
@@ -73,7 +80,7 @@ class CaptchaImage(models.Model):
 
     # class Meta:
     #     ordering = ['-difficulty_level']
-# using order_by query instead in views
+# using order_by query instead from within views
 
 
 class ImageSlice(models.Model):
@@ -83,6 +90,14 @@ class ImageSlice(models.Model):
 
     def __str__(self):
         return self.slice_name
+
+
+class Game(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    def solved_history(self, user):
+        history = UserResponses.objects.filter(user=user)
+        return history
 
 
 class UserResponses(models.Model):

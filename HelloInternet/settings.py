@@ -132,4 +132,6 @@ MEDIA_ROOT = BASE_DIR / 'captchapractice/media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/captchapractice/begin/'
+LOGIN_REDIRECT_URL = '/captchapractice/'
+# only applies when logging in through /accounts/login/. When clicking on any log in link,
+#   it will redirect you back to the original page

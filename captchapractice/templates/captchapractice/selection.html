@@ -2,29 +2,162 @@
 {% load static %}
 
 
-
 {% block content %}
-    <h2>Right Section</h2>
-    <p>This is the content of the right section.</p>
 
-    <form action="" method="post">
-        {% csrf_token %}
-        <div class="image-grid">
+<h2>Right Section</h2>
+<p>This is the content of the right section.</p>
+{{ image_id | json_script:"image_id" }}
 
-        {% for slice in img_slice_list %}
-            <div class="image">
-                <label for="{{ slice }}"><img class="base-image" src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg" alt="Image {{ slice }}"></label>
-                <input type="checkbox" name="selected_images" id="{{ slice }}" value="{{ slice }}">
+<div id="main-prompt">
+
+    <h3>{{ prompt }}</h3>
+
+    <div id="get-contents">
+
+        <form id="response-form">
+            {% csrf_token %}
+
+            <div class="image-grid">
+                {% for slice in img_slice_list %}
+                <div class="image">
+                    <label for="{{ slice }}"><img class="base-image"
+                            src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg"
+                            alt="Image {{ slice }}"></label>
+                    <input type="checkbox" name="selected_images" id="{{ slice }}" value="{{ slice }}">
+                </div>
+                {% empty %}
+                <li>Sorry, no images in this captcha.</li>
+                {% endfor %}
             </div>
-        {% empty %}
-            <li>Sorry, no images in this captcha.</li>
-        {% endfor %}
+
+            <button type="submit" onclick="submitForm()">Submit</button>
+        </form>
+
+    </div>
+
+    <!-- this div is hidden the entire time, however, its contents (post-contents) is spliced onto get-contents after a POST -->
+    <!-- I'm not using element.style.display = 'block'/'none' because it doesn't seem to  work for async html loading-->
+    <!-- I imagine its a less clunky workaround than positioning the style.display before the POST request is sent -->
+    <div class="hidden-display">
+        <div id="post-contents">
+
+            <div class="image-grid">
+                {% for slice in img_slice_list %}
+                <div class="image">
+                    <img class="base-image" src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg"
+                        alt="Image {{ slice }}">
+                    {% if slice.slice_name in wrong_responses %}
+                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}wrong.jpg"
+                        alt="Overlay Image">
+                    {% elif slice.slice_name in unselected_correct_r %}
+                    <!-- change color to something more intuitive -->
+                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}default.jpg"
+                        alt="Overlay Image">
+                    {% elif slice.slice_name in correct_responses %}
+                    <!-- takes into account only the correct responses that were selected and not the unselected ones -->
+                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}correct.jpg"
+                        alt="Overlay Image">
+                    {% else %}
+                    <!-- <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}default.jpg" alt="Overlay Image"> -->
+                    {% endif %}
+                </div>
+                {% empty %}
+                <li>Sorry, no images in this captcha.</li>
+                {% endfor %}
+            </div>
+            <button class="hidden-visibility">Do nothing</button>
 
         </div>
+    </div>
 
-        <button class="button-container" type="submit">Submit Selection</button>
-    </form>
+
+<script>
+    // adding script within main-prompt div so even the script gets translocated
+    // is there a more elegant solution? yes. Include a block content within header also and script src
+        // but will it still work?
+
+
+    async function submitForm() {
+        event.preventDefault();
+
+        const csrfToken = getCookie('csrftoken');
+        // const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        const imageId = JSON.parse(document.getElementById("image_id").textContent);
+        const postURL = `/captchapractice/${imageId}/`;
+
+        const form = document.querySelector('#response-form');
+        const formData = new FormData(form);
+        const formDataArray = [];
+        formData.forEach((value, key) => {
+            if (key === "selected_images") {
+                formDataArray.push(value);
+            }
+        });
+        const jsonData = JSON.stringify(formDataArray);
+
+        try {
+            const response = await fetch(postURL, {
+                method: 'POST',
+                body: jsonData,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                mode: 'same-origin'
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const responseJson = await response.json();
+            responseHTML = responseJson.html
+
+            renderPostContents(responseHTML, '#post-contents', '#get-contents');
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+
+    function renderPostContents(htmldoc, fragmentSelector, parentSelector) {
+        const parentDiv = document.querySelector(parentSelector);
+
+        const tempContainer = document.createElement('div');
+        tempContainer.innerHTML = htmldoc;
+
+        const contentFragment = tempContainer.querySelector(fragmentSelector);
+
+        parentDiv.innerHTML = '';
+        parentDiv.appendChild(contentFragment);
+    }
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+
+</script>
+
+</div>
+
+
 {% endblock %}
 
 
-
+{% comment %}
+{% endcomment %}

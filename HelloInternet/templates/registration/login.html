@@ -17,20 +17,26 @@
         {% endif %}
     {% endif %}
 
-    <form action="" method="post">
-        {% csrf_token %}
-        <table>
-            <tr>
-                <td>{{ form.username.label_tag}}</td>
-                <td>{{ form.username }}</td>
-            </tr>
-            <tr>
-                <td>{{ form.password.label_tag}}</td>
-                <td>{{ form.password }}</td>
-            </tr>
-        </table>
-        <input type="submit" value="Log In">
-        <input type="hidden" name="next"  value="{{next}}">
-    </form>
+
+    {% if user.is_authenticated %}
+        <p class="line2">Logged in as: <strong>{{ user.get_username }}</strong>
+        <a href="{% url 'logout' %}?next={{ request.path }}" class="line2">(Logout)</a></p>    
+    {% else %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>{{ form.username.label_tag}}</td>
+                    <td>{{ form.username }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.password.label_tag}}</td>
+                    <td>{{ form.password }}</td>
+                </tr>
+            </table>
+            <input type="submit" value="Log In">
+            <input type="hidden" name="next"  value="{{next}}">
+        </form>
+    {% endif %}
 
 {% endblock %}

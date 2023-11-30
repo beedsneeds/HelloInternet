@@ -25,12 +25,16 @@
         {% for slice in img_slice_list %}
             <div class="image">
                 <img class="base-image" src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg" alt="Image {{ slice }}">
-                {% if slice.slice_name in correct_responses %}
-                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}correct.jpg" alt="Overlay Image">
-                {% elif slice.slice_name in wrong_responses %}
+                {% if slice.slice_name in wrong_responses %}
                     <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}wrong.jpg" alt="Overlay Image">
-                {% else %}
+                {% elif slice.slice_name in unselected_correct_r %}
+                    <!-- change color -->
                     <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}default.jpg" alt="Overlay Image">
+                {% elif slice.slice_name in correct_responses %} 
+                    <!-- takes into account only the correct responses that were selected and not the unselected ones -->
+                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}correct.jpg" alt="Overlay Image">
+                {% else %}
+                    <!-- <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}default.jpg" alt="Overlay Image"> -->
                 {% endif %}             
             </div>
         {% empty %}

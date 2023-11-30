@@ -1,8 +1,11 @@
 # Register your models here.
 
 from django.contrib import admin
+from django.http.request import HttpRequest
+from django.http.response import HttpResponse
+from django.shortcuts import redirect
 
-from .models import CaptchaImage, ImageSlice, UploadImage
+from .models import CaptchaImage, ImageSlice
 
 class SliceInline(admin.TabularInline):
     model = ImageSlice
@@ -14,4 +17,3 @@ class CaptchaAdmin(admin.ModelAdmin):
 
 admin.site.register(CaptchaImage, CaptchaAdmin)
 
-admin.site.register(UploadImage)

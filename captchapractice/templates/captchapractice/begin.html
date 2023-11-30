@@ -2,8 +2,247 @@
 {% load static %}
 
 
+
 {% block content %}
 
-    <p>You're logged in and redirected</p>
+<h2> Let's try Async</h2>
 
-{% endblock %}
+<form method="post">
+    {% csrf_token %}
+
+    <label for="tomat" alt="Image tomat"> Pick This</label>
+    <input type="checkbox" name="selected_images" id="tomat" value="tomat">
+    <label for="potat" alt="Image potat"> Pick This</label>
+    <input type="checkbox" name="selected_images" id="potat" value="potat">
+    <label for="timpat" alt="Image timpat">Pick This</label>
+    <input type="checkbox" name="selected_images" id="timpat" value="timpat">
+
+    <button class="button-container" type="submit" id="test-submit"">Fuck this shit</button>
+</form>
+
+<div id=" central-area" class="fade-in">
+        </div>
+
+
+        <script defer>
+            // replace doc.getelemenetbyID with doc.queryseelctor because that's the new version and more convenient
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const centralArea = document.getElementById('central-area');
+                let currentPage = 6;
+
+                // Function to handle the loading of the centralArea div
+                async function loadPage(pageNumber) {
+                    try {
+                        const response = await fetch(`/captchapractice/${pageNumber}/`);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error: ${response.status}`);
+                        }
+
+                        const data = await response.text();
+                        renderCentralArea(data, '#main-prompt');
+
+                        console.log("async fn try")
+
+                        // const responseForm = getElementAfterAsync('response-form');
+                        const responseSubmit = getSubmitAfterAsync('response-submit');
+                        // getElementAfterAsync('next-prompt');
+
+                        // responseSubmit.addEventListener('submit', handleSubmit);
+
+
+                    } catch (error) {
+                        console.error('Error while Fetching:', error);
+                        console.log("async fn catch")
+                    }
+                }
+
+                // helper function to loadPage. Handles what and how the central div displays
+                // delete pagenumber param
+                function renderCentralArea(data, selector) {
+                    console.log("central area rendering")
+
+                    const tempContainer = document.createElement('div');
+                    tempContainer.innerHTML = data;
+
+                    const contentFragment = tempContainer.querySelector(selector);
+
+                    centralArea.innerHTML = '';
+                    centralArea.appendChild(contentFragment);
+
+                    requestAnimationFrame(() => {
+                        centralArea.classList.toggle('fade-in');
+                    });
+                    setTimeout(() => {
+                        centralArea.classList.toggle('fade-in');
+                    }, 250);
+
+                }
+
+                function getSubmitAfterAsync(selector) {
+                    if (document.readyState !== "loading") {
+                        const responseSubmit = document.getElementById(selector);
+                        if (responseSubmit) {
+                            console.log("Response form exists (getElementAfterAsync)");
+                            responseSubmit.addEventListener('click', handleSubmit);
+                            console.log("added event listener to responseSubmit")
+                        } else {
+                            console.error("Error: 'response-form' not found in the DOM");
+                        }
+                    }
+                    else {
+                        console.log("getElementAfterAsync seems to not be loading");
+                    };
+                }
+
+
+                function handleSubmit(event) {
+                    console.log("handleSubmit has been called")
+                    event.preventDefault();
+
+                    if (document.readyState !== "loading") {
+                        const form = document.getElementById('response-form');
+                        const formData = new FormData(form);
+                        console.log(formData)
+                        // I've stopped here. The get element by ID seems to work(idk)
+                        // but the issue is that formDATA is still empty
+                        // ACTUALLY IT DOES WORKKKKKK
+                        // I also want to make getSubmitAfterAsync more generalized and make it await the loadPage function and then run.
+
+                        formData.forEach((value, key) => {
+                            console.log(`Field name: ${key}, Value: ${value}`);
+                        });
+
+                    }
+                    else {
+                        console.log("handleSubmit seems to not be loading");
+                    };
+                }
+
+
+
+
+
+                // document.getElementById('response-form').addEventListener('submit', handleSubmit);
+                // const responseForm = document.getElementById('response-form');
+                //     if (responseForm) {
+                //         // responseForm.addEventListener('submit', handleSubmit);
+                //         console.log("Response form exists")
+                //     } else {
+                //         console.error("Error: 'response-form' not found in the DOM");
+                //     }
+
+
+
+
+
+                // function handleNextButtonClick(event) {
+                //     console.log("handling next button click") 
+                //     // this fires for every selection of image. Is there a way to avoid this behaviour?
+
+                //     // if (event.target.id === 'test-submit') {
+                //     //     const form = document.getElementById('response-form');
+                //     //     // const form = "well then will this work"
+                //     //     const formData = new FormData(form);
+                //     //     event.preventDefault();
+                //     //     console.log(form)
+                //     //     console.log(formData)
+                //     // }
+
+                //     // if (event.target.id === 'response-submit') {
+                //     //     const form = document.getElementById('response-form');
+                //     //     // const form = "well then will this work"
+                //     //     const formData = new FormData(form);
+                //     //     // event.preventDefault();
+
+                //     //     // const checkboxValues = Array.from(formData.entries())
+                //     //     //     .filter(([name, value]) => form.elements[name].type === 'checkbox' && form.elements[name].checked)
+                //     //     //     .reduce((accumulator, [name, value]) => {
+                //     //     //         accumulator[name] = value;
+                //     //     //         return accumulator;
+                //     //     //     }, {});
+
+                //     //     // console.log('Checkbox Values:', checkboxValues);
+
+                //     //     console.log(form)
+                //     //     console.log(formData)
+                //     //     console.log(formData.values())
+                //     // }
+
+                //     // if (event.target.id === 'response-submit') {
+                //     if (event.target.id === 'next-prompt') {
+                //         event.preventDefault();
+                //         currentPage++;
+                //         loadPage(currentPage);
+                //     }
+                // }
+
+
+
+
+
+
+
+                loadPage(currentPage);
+
+
+            });
+
+
+        </script>
+
+
+
+        <!-- 
+    <div id="container">
+        <button>Click me!</button>
+    </div>
+    <pre id="div_output"></pre>
+
+    <script>
+        // color changing
+        function random(number) {
+            return Math.floor(Math.random() * (number + 1));
+        }
+        function bgChange(e) {
+            const rndCol = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
+            e.target.style.backgroundColor = rndCol;        
+        };
+        const btn = document.querySelector("button");
+        btn.addEventListener("click", bgChange);
+
+        // notifies when you click an element
+        const div_output = document.querySelector("#div_output");
+        function notifyClick(e) {
+            div_output.textContent += `You clicked on a ${e.currentTarget.tagName} element\n`;
+        }
+        const container = document.querySelector("#container");
+        container.addEventListener("click", notifyClick);
+        const button = document.querySelector("button");
+        button.addEventListener("click", notifyClick);
+
+    </script>
+
+
+    <br><br>
+
+    
+    <input id="textBox" type="text" />
+    <div id="output"></div>
+
+    <script>
+        //  tracks when you listen to a key
+        const textBox = document.querySelector("#textBox");
+        const output = document.querySelector("#output");
+        textBox.addEventListener("keydown", (event) => {
+            output.textContent = `You pressed "${event.key}".`;
+        });
+    </script>
+     -->
+
+
+        {% endblock %}
+
+        {% comment %}
+
+        {% endcomment %}
