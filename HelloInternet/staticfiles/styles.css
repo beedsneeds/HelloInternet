@@ -1,0 +1,246 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    scroll-behavior: smooth;
+}
+
+/* parallax */
+.parallax-container {
+    background-color: #E3E8E7;
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.parallax {
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: rgb(8, 71, 71);
+    /* text color */
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.parallax#section1 {
+    background-image: url('./base_images/top.png');
+    /* Parallax background image */
+    min-height: 11%;
+}
+
+.parallax#section2 {
+    background-image: url('./base_images/top.png');
+    /* Parallax background image */
+    min-height: 30%;
+}
+
+.login-text {
+    position: absolute;
+    height: 30px;
+    margin: 10px;
+    top: 3rem;
+    right: 0;
+}
+
+.line2 {
+    bottom: 0;
+    right: 0;
+    color: rgb(0, 86, 86);
+    /* Button text color */
+    transition: color 0.5s ease;
+    /* Smooth color transition */
+}
+
+
+/* L-R split container */
+
+.l-r-container {
+    display: flex;
+    box-shadow: 0px -6px 8px rgba(0, 0, 0, 0.1);
+    min-height: 65%;
+}
+
+.right-section,
+.left-section {
+    /* border: 1px solid #e6e6e6; */
+    box-shadow: 1px 6px 8px rgba(0, 0, 0, 0.1);
+}
+
+.left-section {
+    flex: 1;
+    padding: 20px;
+    background-color: #f0f0f0;
+    /* background-color: #EFF0EB; */
+}
+
+.right-section {
+    flex: 4;
+    padding: 10px;
+    background-color: #f5f5f5;
+}
+
+/* sidebar & links */
+
+.button-link {
+    display: inline-block;
+    /* Make it a block-level element */
+    padding: 2px 6px;
+    /* Add padding to create a button-like shape */
+    border: 0.7px solid #434343;
+    background-color: rgba(0, 128, 128, 0.068);
+    color: teal;
+    /* Button text color */
+    transition: color 0.7s ease;
+    /* Smooth color transition */
+    text-decoration: none;
+    /* Remove underlines by default */
+    border-radius: 3px;
+    /* Rounded corners */
+    cursor: pointer;
+    /* Change cursor on hover for interactivity */
+}
+
+a:hover {
+    color: rgba(0, 96, 96, 0.592);
+    /* Change color on hover */
+    text-decoration: underline;
+    /* Underline on hover */
+}
+
+li {
+    padding-bottom: 10px;
+    /* Add padding between list items */
+    text-align: left;
+}
+
+.muted-text {
+    opacity: 0.4;
+}
+
+#import-content {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #000;
+    padding: 20px;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease-in-out;  
+    /* keep this value equal with the setTimeout setting */
+}
+#import-content.fade-in {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+
+/* found in begin.html */
+#central-area {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #000;
+    padding: 20px;
+
+    /* opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease-in-out; */
+    /* keep this value equal with the setTimeout setting */
+}
+/* #central-area.fade-in {
+    opacity: 1;
+    visibility: visible;
+} */
+
+/* image grid behaviour*/
+
+#main-prompt {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.hidden-display {
+    display: none;
+}
+
+.hidden-visibility {
+    visibility: hidden;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* Three equal columns */
+    /* gap: 15 3.7px; */
+    /* Add some spacing between the images */
+    text-align: center;
+    /* Center-align images within their containers */
+    width: 25em;
+    /* Set the grid container width to 70% of the screen's width */
+    margin: 0 auto;
+    /* Center the grid container horizontally on the screen */
+    box-shadow: 5px -2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image {
+    position: relative;
+    /* Add relative positioning to the image container */
+    margin: 2px;
+}
+
+.image input[type="checkbox"] {
+    position: absolute;
+    /* Position the checkbox absolutely */
+    top: 0;
+    /* Adjust the top and left to position it where you want */
+    left: 0;
+    z-index: 1;
+    /* Place the checkbox above the image */
+    opacity: 100;
+    /* Hide the actual checkbox input */
+    transition: all 0.3s;
+    /* Add a smooth transition effect */
+    /* for some reason I can't change the color */
+}
+
+.image input[type="checkbox"]:hover {
+    /* Style the checkbox when hovered over */
+    transform: scale(1.35);
+    /* Increase the scale on hover */
+}
+
+.base-image {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.overlay-image {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    opacity: 0.5;
+}
+
+button {
+    margin: 3px 3px;
+}
+
+
+

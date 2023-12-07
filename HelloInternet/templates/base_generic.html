@@ -11,27 +11,17 @@
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    {% block scriptblock %}
+    <!-- No common scripts yet -->
+    {% endblock scriptblock %}
 </head>
 
 <body>
     <div class="parallax-container">
 
         <section class="parallax" id="section1">
-            <h1>HELOLLOOOO</h1>
+            <h2>HELOLLOOOO</h2>
             <p>Scroll down to see the parallax effect in action.</p>
-
-            <div class="login-text">
-                {% if user.is_authenticated %}
-                <p class="line2">Logged in as: <strong>{{ user.get_username }}</strong>
-                    <a href="{% url 'logout' %}?next={{ request.path }}" class="line2">(Logout)</a>
-                </p>
-                {% comment %}
-                {% else %}
-                <a href="{% url 'login' %}?next={{ request.path }}" class="line2">Login</a>
-                {% endcomment %}
-                {% endif %}
-            </div>
-
         </section>
 
         <div class="l-r-container">
@@ -45,15 +35,27 @@
                     <li><a href="{% url 'captchapractice:begin' %}" class="button-link">Begin (Challenge Yourself)</a>
                     </li>
                     <li><a href="{% url 'login' %}" class="button-link">Log in</a></li>
+                    <p>Scroll down to see the parallax effect in action.</p><br>
+
                 </ul>
             </div>
 
             <div class="right-section" id="something">
-                <div id="js_view">
-                    {% block content %}
-                    <h2> Empty parent content block</h2>
-                    {% endblock content %}
+                <div class="login-div">
+                    {% if user.is_authenticated %}
+                    <p class="login-text">Logged in as: <strong>{{ user.get_username }}</strong>
+                        <a href="{% url 'logout' %}?next={{ request.path }}" class="login-text">(Logout)</a>
+                    </p>
+                    {% comment %}
+                    {% else %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="login-text">Login</a>
+                    {% endcomment %}
+                    {% endif %}
                 </div>
+
+                {% block content %}
+                <h2> Empty parent content block</h2>
+                {% endblock content %}
             </div>
 
         </div>
