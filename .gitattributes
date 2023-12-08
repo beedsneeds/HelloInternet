@@ -1,4 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# HelloInternet/staticfiles/** linguist-generated=True
+HelloInternet/staticfiles/** linguist-generated=True
