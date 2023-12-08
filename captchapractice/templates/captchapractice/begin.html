@@ -16,6 +16,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         let currentPage = 6;
 
+        
         async function loadPage(pageNumber, method = 'GET', formData = null) {
             const url = `/captchapractice/${pageNumber}/`;
             try {
@@ -40,8 +41,8 @@
             }
         }
 
-        // Helper function to loadPage. Handles what and how the central div displays
 
+        // Helper function to loadPage. Handles what and how the central div displays
         function renderImportContents(htmldoc, fragmentSelector, parentSelector) {
             // const parser = new DOMParser();
             // const doc = parser.parseFromString(htmldoc, 'text/html');
@@ -62,6 +63,7 @@
                 parentDiv.classList.toggle('fade-in');
             }, 250);
         }
+
 
         function runScriptAfterAsync() {
             if (document.readyState !== "loading") {
@@ -90,6 +92,7 @@
                 console.log("querySelectorAfterAsync seems to not be loading");
             };
         }
+
 
         async function handleSubmit(event) {
             console.log("This button is being clicked");
