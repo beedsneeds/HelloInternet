@@ -29,7 +29,14 @@ SECRET_KEY = 'django-insecure-u#(7+^b4st*83+$@xjwx2o-l=v5_lgk82j-bnv@(@85@6=aj)v
 # ALLOWED_HOSTS = []
 
 DEBUG = False
-ALLOWED_HOSTS = ['.herokuapp.com']
+
+ALLOWED_HOSTS = ['.herokuapp.com', 
+                 '127.0.0.1',
+                 ]
+
+CSRF_TRUSTED_ORIGINS = ['.herokuapp.com']
+# Since the applications uses CSRF protection, 
+# list of trusted origins for unsafe requests (e.g. POST)
 
 
 # Application definition
@@ -88,12 +95,6 @@ WSGI_APPLICATION = 'HelloInternet.wsgi.application'
 #     }
 # }
 
-# if 'DATABASE_URL' in os.environ:
-#     DATABASES['default'] = dj_database_url.config(
-#         conn_max_age=500,
-#         conn_health_checks=True,
-#     )
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -104,6 +105,12 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=500,
+        conn_health_checks=True,
+    )
 
 
 # Password validation
