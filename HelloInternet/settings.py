@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['.herokuapp.com',
                  '127.0.0.1',
                  ]
 
-CSRF_TRUSTED_ORIGINS = ['.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['https://hello-internet-c2d83d7d2d7e.herokuapp.com/']
 # Since the applications uses CSRF protection, 
 # list of trusted origins for unsafe requests (e.g. POST)
 
