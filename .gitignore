@@ -5,3 +5,10 @@
 
 # Database
 *.sqlite3
+
+# Shortcut to pgAdmin
+pgAdmin4 - Shortcut.lnk
+
+# Static
+/captchapractice/static/**
+/HelloInternet/static/**
