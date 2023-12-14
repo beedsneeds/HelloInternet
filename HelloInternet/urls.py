@@ -26,5 +26,5 @@ urlpatterns = [
 
     path('captchapractice/', include('captchapractice.urls')),
 
-    # path('', RedirectView.as_view(url='threebee/')),
+    path('', RedirectView.as_view(url='captchapractice/')),
 ]
