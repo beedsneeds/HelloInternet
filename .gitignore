@@ -9,6 +9,7 @@
 # Shortcut to pgAdmin
 pgAdmin4 - Shortcut.lnk
 
-# Static
-/captchapractice/static/**
-/HelloInternet/static/**
+# Static  wait you don't need to do this for whitenoise
+# /captchapractice/static/**
+# /HelloInternet/static/**
+staticfiles/**

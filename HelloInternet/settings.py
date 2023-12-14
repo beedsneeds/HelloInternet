@@ -143,7 +143,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'HelloInternet/static',
     BASE_DIR / 'captchapractice/static',
 ]
-STATIC_ROOT = BASE_DIR / 'HelloInternet/staticfiles'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'captchapractice/media'
