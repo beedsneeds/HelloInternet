@@ -53,15 +53,12 @@
                     <img class="base-image" src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg"
                         alt="Image {{ slice }}">
                     {% if slice.slice_name in false_postives %}
-                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}wrong.jpg"
-                        alt="Overlay Image">
+                    <div class="overlay-image-wrong"></div>
                     {% elif slice.slice_name in false_negatives %}
                     <!-- change color to something more intuitive -->
-                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}default.jpg"
-                        alt="Overlay Image">
+                    <div class="overlay-image-missed"></div>
                     {% elif slice.slice_name in true_positives %}
-                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}correct.jpg"
-                        alt="Overlay Image">
+                    <div class="overlay-image-correct"></div>
                     {% else %}
                     <!-- <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}default.jpg" alt="Overlay Image"> -->
                     {% endif %}
@@ -85,4 +82,17 @@
 
 
 {% comment %}
+
+{% if slice.slice_name in false_postives %}
+                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}wrong.jpg"
+                        alt="Overlay Image">
+                    {% elif slice.slice_name in false_negatives %}
+                    <!-- change color to something more intuitive -->
+                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}default.jpg"
+                        alt="Overlay Image">
+                    {% elif slice.slice_name in true_positives %}
+                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}correct.jpg"
+                        alt="Overlay Image">
+
+
 {% endcomment %}

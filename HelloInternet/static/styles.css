@@ -219,7 +219,6 @@ li {
     position: relative;
     /* Add relative positioning to the image container */
     margin: 2px;
-    height: 200px;
 }
 
 .image input[type="checkbox"] {
@@ -257,6 +256,36 @@ li {
     height: 100%;
 
     position: absolute;
+    opacity: 0.5;
+}
+.overlay-image-correct {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    background-color: aquamarine;
+    opacity: 0.8;
+}
+.overlay-image-wrong {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    background-color: orange;
+    opacity: 0.5;
+}
+.overlay-image-missed {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    background-color: gray;
     opacity: 0.5;
 }
 
