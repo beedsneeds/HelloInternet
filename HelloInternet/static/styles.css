@@ -209,7 +209,7 @@ li {
     text-align: center;
     /* Center-align images within their containers */
     width: 25em;
-    /* Set the grid container width to 70% of the screen's width */
+    /* Set the grid container width to 25% of the parent element */
     margin: 0 auto;
     /* Center the grid container horizontally on the screen */
     box-shadow: 5px -2px 8px rgba(0, 0, 0, 0.1);
@@ -219,6 +219,7 @@ li {
     position: relative;
     /* Add relative positioning to the image container */
     margin: 2px;
+    height: 200px;
 }
 
 .image input[type="checkbox"] {
