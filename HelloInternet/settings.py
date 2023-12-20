@@ -28,19 +28,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
-# SECRET_KEY='django-insecure-u#(7+^b4st*83+$@xjwx2o-l=v5_lgk82j-bnv@(@85@6=aj)v'
-
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-# ALLOWED_HOSTS = []
+DEBUG = os.environ.get('DEBUG')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
 
-DEBUG = False
-
-ALLOWED_HOSTS = ['.herokuapp.com', 
-                 '127.0.0.1',
-                 ]
+# DEBUG = False
+# ALLOWED_HOSTS = ['.herokuapp.com', 
+#                  '127.0.0.1',
+#                  ]
 
 CSRF_TRUSTED_ORIGINS = ['https://hello-internet-c2d83d7d2d7e.herokuapp.com/']
 # Since the applications uses CSRF protection, 
