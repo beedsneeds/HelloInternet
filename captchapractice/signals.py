@@ -22,11 +22,12 @@ def validate_and_create_slices(sender, instance, created, **kwargs):
     up_image_out = os.path.join(settings.BASE_DIR, 'captchapractice', 'static', 'captchapractice', 'images', 'prompt candidates')
     slice_out = os.path.join(settings.BASE_DIR, 'captchapractice', 'static', 'captchapractice', 'images', 'prompts')
     
-    if not validate_dimensions(instance, up_dir, up_image_out):
-        raise ValidationError("Image does not have 1:1 dimensions. Press back and retry with appropriate dimensions")
-    else:
-        # else just call a function that does the clice creation process
-        if created:
+    if created:
+        if not validate_dimensions(instance, up_dir, up_image_out):
+            raise ValidationError("Image does not have 1:1 dimensions. Press back and retry with appropriate dimensions")
+        else:
+            # else just call a function that does the clice creation process
+
             filename = instance.image_name
             slice_count = instance.slice_count
             make_slices(filename, slice_count, up_image_out, slice_out)
