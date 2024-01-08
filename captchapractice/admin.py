@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 
 from .models import CaptchaImage, ImageSlice
 
-class SliceInline(admin.TabularInline):
+class SliceInline(admin.StackedInline):
     model = ImageSlice
     extra = 0
 

@@ -60,13 +60,12 @@ def selection(request, image_id):
     img_slice_list = img_object.get_img_slice_list(image_id=image_id)
 
     if request.method == "GET":
-        prompt = img_object.prompt_text
 
         template = loader.get_template("captchapractice/selection.html")
         context = {
             "img_slice_list": img_slice_list,
-            "prompt": prompt,
-            "image_id": image_id,
+            "img_object": img_object,
+            "image_id": image_id, #you can remove this as well
             }
 
         return HttpResponse(template.render(context, request))
@@ -90,6 +89,7 @@ def selection(request, image_id):
 
         context = {
             "img_slice_list": img_slice_list,
+            "img_object": img_object,
             "evaluation": evaluation,
             "true_positives": true_positives,
             "false_postives": false_postives,

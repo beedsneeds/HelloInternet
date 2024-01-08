@@ -13,7 +13,7 @@
 
 <div id="main-prompt">
 
-    <h3>{{ prompt }}</h3>
+    <h3>{{ img_object.prompt_text }}</h3>
     {{ image_id | json_script:"image_id" }}
 
     <div id="get-contents">
@@ -21,7 +21,7 @@
         <form id="response-form">
             {% csrf_token %}
 
-            <div class="image-grid">
+            <div class="image-grid" style="--slice-count: {{ img_object.slice_count }};">
                 {% for slice in img_slice_list %}
                 <div class="image">
                     <label for="{{ slice }}"><img class="base-image"
@@ -47,7 +47,7 @@
     <div class="hidden-display">
         <div id="post-contents">
 
-            <div class="image-grid">
+            <div class="image-grid" style="--slice-count: {{ img_object.slice_count }};">
                 {% for slice in img_slice_list %}
                 <div class="image">
                     <img class="base-image" src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg"
