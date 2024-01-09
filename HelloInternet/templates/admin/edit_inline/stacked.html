@@ -33,6 +33,10 @@
             <img class="base-image"
                 src="{% static 'captchapractice/images/prompts/' %}{{ inline_admin_form.original }}.jpg"
                 alt="Image {{ slice }}">
+                {% comment %}
+                <!-- This above block is the only thing added. Rename this entire file to something else to 'deactivate it' -->
+                {% endcomment %}
+
             
             {% for fieldset in inline_admin_form %}
                 {% include "admin/includes/fieldset.html" %}

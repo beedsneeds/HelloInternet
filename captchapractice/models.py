@@ -32,6 +32,7 @@ from django.forms import ModelForm
 
 '''
 
+
 class CaptchaImage(models.Model):
     image = models.ImageField(upload_to="admin uploads/", null=True)  # MEDIA_ROOT/admin uploads/
     image_name = models.CharField(max_length=10, unique=True, help_text='Enter an abbreviated image name (max length 10 characters). Do not include an extension')

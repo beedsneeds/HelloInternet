@@ -1,6 +1,4 @@
 
-console.log("do we even reach selection.js, like seriously?")
-
 document.addEventListener('DOMContentLoaded', function() {
     const submitButton = document.querySelector('#submit-form-button');
     submitButton.addEventListener('click', submitForm);
@@ -8,8 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 async function submitForm(event) {
-    console.log("do we even reach selection.js, like seriously?")
-
     event.preventDefault();
 
     const csrfToken = getCookie('csrftoken');
