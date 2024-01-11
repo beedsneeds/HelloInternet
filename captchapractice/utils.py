@@ -3,28 +3,6 @@ from PIL import Image
 import os 
 
 
-def evaluate_response(correct_choices, selected_choices):
-    selected = set(selected_choices)
-    correct = set(correct_choices)
-
-    # Members that are 'correct' in the traditional sense (they occur in both sets // set intersection)
-    true_positives = correct & selected  
-    # Members that are not 'correct' but were selected nonetheless
-    false_postives = selected - correct
-    # Members that were 'correct' but weren't selected
-    false_negatives = correct - selected
-
-    # Testing for set equality (both sets have the same elements)
-    if selected == correct:
-        evaluation = "You are correct!"
-    elif len(false_negatives) > 0 and len(false_postives) == 0:
-        evaluation = 'Uh-oh! You missed an image or two.'
-    else:
-        evaluation = "Oops, you got it wrong!"
-
-    return (evaluation, true_positives, false_postives, false_negatives)
-
-
 def validate_dimensions(instance, dir_in, dir_out):
     filename = str(instance.image)  
     # Format of 'filename': "admin uploads/image_name.ext"

@@ -29,34 +29,31 @@ from django.forms import ModelForm
 
     What I didn't try:
         Just writing custom views outside of django-admin, for my specific needs 
+        Trying to incorporate async JS in admin
 
 '''
 
 
 class CaptchaImage(models.Model):
     image = models.ImageField(upload_to="admin uploads/", null=True)  # MEDIA_ROOT/admin uploads/
-    image_name = models.CharField(max_length=10, unique=True, help_text='Enter an abbreviated image name (max length 10 characters). Do not include an extension')
-    prompt_text = models.CharField(max_length=200, help_text='The prompt the user sees. Eg: "Select all the cars in the image" ') 
+    image_name = models.CharField(max_length=10, unique=True, 
+                                  help_text='Enter an abbreviated image name (max length 10 characters). Do not include an extension')
+    prompt_text = models.CharField(max_length=200, 
+                                  help_text='The prompt the user sees. Eg: "Select all the cars in the image" ') 
 
     SLICE_CHOICES = [
         (3, "3x3 Grid"),
         (4, "4x4 Grid"),
         (5, "5x5 Grid"),
     ]
-    slice_count = models.IntegerField(
-        choices=SLICE_CHOICES,
-        default=3,
-    )
+    slice_count = models.IntegerField(choices=SLICE_CHOICES, default=3)
     
     DIFFICULTY = [
         (1, "Easy"),
         (2, "Medium"),
         (3, "Hard"),
     ]
-    difficulty_level = models.IntegerField(
-        choices=DIFFICULTY,
-        default=1
-    )
+    difficulty_level = models.IntegerField(choices=DIFFICULTY, default=1)
 
     def __str__(self):
         return self.prompt_text
@@ -65,15 +62,10 @@ class CaptchaImage(models.Model):
         return reverse('captchapractice:selection', args=[str(self.id)])
     
     def correct_choices(self, image_id):
-        result = []
-        correct_choices = ImageSlice.objects.filter(root_image=image_id).filter(element_presence=1).values("slice_name")
-            # returns an iterable QuerySet object consisting of single element dictionaries for each ImageSlice object
-        correct_choices = list(correct_choices)
-        
-        for item in correct_choices:
-            for key in item:
-                result.append(item[key])
-        
+        result = list(ImageSlice.objects.filter(root_image=image_id)
+                      .filter(element_presence=1)
+                      .values_list("slice_name", flat=True))
+
         return result
 
     def get_img_slice_list(self, image_id):
@@ -101,12 +93,14 @@ class ImageSliceForm(ModelForm):
 
 
 class Game(models.Model):
+    # This class doesn't need to exist. The methods could be transplanted somewhere else.
+    # It's a placeholder for future functionality
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     
     def solved_history(self, user):
         history = UserResponses.objects.filter(user=user)
         return history
-
+    
 
 class UserResponses(models.Model):
     root_image = models.ForeignKey(CaptchaImage, on_delete=models.SET_NULL, null=True, blank=True)
@@ -114,4 +108,25 @@ class UserResponses(models.Model):
     response_json = models.TextField(null=True, max_length=800)   
         # max length dependant on how large the image grid is + length of imageslice names
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def evaluate_response(correct_choices, selected_choices):
+        selected = set(selected_choices)
+        correct = set(correct_choices)
+
+        # Members that are 'correct' in the traditional sense (they occur in both sets // set intersection)
+        true_positives = correct & selected  
+        # Members that were wrong. That is, those that were not 'correct' but were selected nonetheless
+        false_postives = selected - correct
+        # Members that were 'correct' but weren't selected
+        false_negatives = correct - selected
+
+        # Testing for set equality (both sets have the same elements)
+        if selected == correct:
+            evaluation = "You are correct!"
+        elif len(false_negatives) > 0 and len(false_postives) == 0:
+            evaluation = 'Uh-oh! You missed an image or two.'
+        else:
+            evaluation = "Oops, you got it wrong!"
+
+        return (evaluation, true_positives, false_postives, false_negatives)
 

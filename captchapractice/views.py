@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user
 
 from .models import CaptchaImage, UserResponses
-from .utils import evaluate_response
 
 import json
 
@@ -28,6 +27,17 @@ def index(request):
     context = {
         "captchalist": captchalist,
     }
+
+    user = get_user(request)
+    # Game.get_captcha_set(user=user)
+
+    solved_history = list(UserResponses.objects.distinct().filter(user=user))
+    solved_history_nondistinct = list(UserResponses.objects.filter(user=user))
+    entire_roster = list(CaptchaImage.objects.values_list("pk", flat=True))
+
+    print('solved history distinct', solved_history)
+    print('non distinct', solved_history_nondistinct)
+    print('entire roster', entire_roster)
 
     return HttpResponse(template.render(context, request))
 
@@ -66,7 +76,7 @@ def selection(request, image_id):
         context = {
             "img_slice_list": img_slice_list,
             "img_object": img_object,
-            "image_id": image_id, #you can remove this as well
+            "image_id": image_id, # you can remove this as well
             }
 
         return HttpResponse(template.render(context, request))
@@ -85,8 +95,7 @@ def selection(request, image_id):
         response.save()
 
         correct_choices = img_object.correct_choices(image_id=image_id)
-        # Testing for correctness; check utils.py for a breakdown
-        evaluation, true_positives, false_postives, false_negatives = evaluate_response(correct_choices, selected_choices)
+        evaluation, true_positives, false_postives, false_negatives = UserResponses.evaluate_response(correct_choices, selected_choices)
 
         context = {
             "img_slice_list": img_slice_list,
