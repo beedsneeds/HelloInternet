@@ -44,6 +44,7 @@ def begin(request):
     ]
     
     prompt = "Select nanami"
+    # remove this and see what's being used in the html
 
     context = {
         "img_slice_list": img_slice_list,
@@ -70,9 +71,9 @@ def selection(request, image_id):
 
         return HttpResponse(template.render(context, request))
 
-
     elif request.method == "POST":
         try: 
+            # POST sends a json response
             selected_choices = json.loads(request.body.decode('utf-8'))
         except json.JSONDecodeError as err:
             return JsonResponse({'status': 'error', 'message': str(err)}, status=400)
@@ -96,9 +97,10 @@ def selection(request, image_id):
             "false_negatives": false_negatives,
         }
 
+        # The view processes the post request and the corresponding response has to be loaded asynchronously.
+        # Therefore, the template is rendered to string which is then loaded onto the page through DOM manipulation in JS
         rendered_template = loader.render_to_string("captchapractice/selection.html", context, request)
         return JsonResponse({'html': rendered_template})
-
 
     else:
         return JsonResponse({'error': 'Method Not Allowed'}, status=405)

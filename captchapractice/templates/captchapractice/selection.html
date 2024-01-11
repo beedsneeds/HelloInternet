@@ -41,8 +41,8 @@
 
     </div>
 
-    <!-- This div is hidden the entire time, however, its contents (post-contents) is spliced onto get-contents after a POST -->
-    <!-- I'm not using element.style.display = 'block'/'none' because it doesn't seem to  work for async html loading-->
+    <!-- This div is hidden the entire time, however, its contents (post-contents) is spliced onto get-contents after a POST through DOM manipulation-->
+    <!-- I'm not using javascript's element.style.display = 'block'/'none' because it doesn't seem to work asynchronously as expected -->
     <!-- I imagine its a less clunky workaround than positioning the style.display before the POST request is sent -->
     <div class="hidden-display">
         <div id="post-contents">
@@ -59,8 +59,6 @@
                     <div class="overlay-image-missed"></div>
                     {% elif slice.slice_name in true_positives %}
                     <div class="overlay-image-correct"></div>
-                    {% else %}
-                    <!-- <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}default.jpg" alt="Overlay Image"> -->
                     {% endif %}
                 </div>
                 {% empty %}
@@ -71,28 +69,16 @@
                 <p>{{ evaluation }}</p>
                 <button type="button" id="next-button">Next</button>
             </div>
+
         </div>
     </div>
 
 </div>
 
-
-
 {% endblock content %}
 
 
 {% comment %}
-
-{% if slice.slice_name in false_postives %}
-                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}wrong.jpg"
-                        alt="Overlay Image">
-                    {% elif slice.slice_name in false_negatives %}
-                    <!-- change color to something more intuitive -->
-                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}default.jpg"
-                        alt="Overlay Image">
-                    {% elif slice.slice_name in true_positives %}
-                    <img class="overlay-image" src="{% static 'captchapractice/images/prompt candidates/' %}correct.jpg"
-                        alt="Overlay Image">
 
 
 {% endcomment %}

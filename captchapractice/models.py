@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 
+from django.forms import ModelForm
 
 
 # Create your models here.
@@ -30,6 +31,7 @@ from django.contrib.auth.models import User
         Just writing custom views outside of django-admin, for my specific needs 
 
 '''
+
 
 class CaptchaImage(models.Model):
     image = models.ImageField(upload_to="admin uploads/", null=True)  # MEDIA_ROOT/admin uploads/
@@ -87,9 +89,15 @@ class ImageSlice(models.Model):
     root_image = models.ForeignKey(CaptchaImage, on_delete=models.CASCADE)
     slice_name = models.CharField(max_length=13)
     element_presence = models.BooleanField(default=False)
+    # rename element presense to object presence
 
     def __str__(self):
         return self.slice_name
+
+class ImageSliceForm(ModelForm):
+    class Meta:
+        model = ImageSlice
+        fields = ["element_presence"]
 
 
 class Game(models.Model):

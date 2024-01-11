@@ -16,3 +16,5 @@ pgAdmin4 - Shortcut.lnk
 # /captchapractice/static/**
 # /HelloInternet/static/**
 staticfiles/**
+captchapractice/media/**
+
