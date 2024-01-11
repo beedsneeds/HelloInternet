@@ -9,12 +9,17 @@
 
 <div id="import-content" class="fade-in">
 
+    {{ captcha_order | json_script:"captcha_order_array" }}
+
+
 </div>
 
 <script>
 
     document.addEventListener('DOMContentLoaded', function () {
-        let currentPage = 1;
+        const captchaOrderArray = JSON.parse(document.querySelector("#captcha_order_array").textContent);
+        console.log(captchaOrderArray)
+        let currentPage = 0;
 
         
         async function loadPage(pageNumber, method = 'GET', formData = null) {
@@ -107,11 +112,11 @@
         function handleNext() {
             console.log("next button clicked");
             currentPage++;
-            loadPage(currentPage);
+            loadPage(captchaOrderArray[currentPage]);
         }
 
 
-        loadPage(currentPage);
+        loadPage(captchaOrderArray[currentPage]);
     });
 
 

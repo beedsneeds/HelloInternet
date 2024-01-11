@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 
 from django.forms import ModelForm
 
+from random import sample
+
 
 # Create your models here.
 
@@ -85,6 +87,9 @@ class ImageSlice(models.Model):
 
     def __str__(self):
         return self.slice_name
+    
+    class Meta:
+        ordering = ['slice_name']
 
 class ImageSliceForm(ModelForm):
     class Meta:
@@ -96,10 +101,6 @@ class Game(models.Model):
     # This class doesn't need to exist. The methods could be transplanted somewhere else.
     # It's a placeholder for future functionality
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    
-    def solved_history(self, user):
-        history = UserResponses.objects.filter(user=user)
-        return history
     
 
 class UserResponses(models.Model):
@@ -129,4 +130,30 @@ class UserResponses(models.Model):
             evaluation = "Oops, you got it wrong!"
 
         return (evaluation, true_positives, false_postives, false_negatives)
+
+
+# this is a class-less method because I don't know what I want to persisently store in 'Game' model
+def get_captcha_order(user):
+        solved_history = set(UserResponses.objects.filter(user=user).values_list("root_image", flat=True))
+        # unsolved_captcha_list = CaptchaImage.objects.exclude(id__in=solved_history)
+        unsolved_captcha_list = CaptchaImage.objects.all()
+        # For testing the bottom line is picked. For production, use the top line
+
+        # It creates a randomized list of captcha primary keys. Total length of quiz is 4:
+        # The first will always be easy difficulty. 2nd medium. 3rd & 4th will be hard (because hard ones are interesting)
+        captcha_quiz_order = []
+        for i in range(1, 4):
+            sorted_by_difficulty = list(unsolved_captcha_list.filter(difficulty_level=i).values_list("pk", flat=True))
+            if i == 3: 
+                temp_name = sample(sorted_by_difficulty, 2)
+                captcha_quiz_order.append(temp_name.pop())
+                captcha_quiz_order.append(temp_name.pop())
+            else:     
+                captcha_quiz_order.append(sample(sorted_by_difficulty, 1).pop())
+            
+        print('captcha_quiz_order', captcha_quiz_order)
+        print('solved history', solved_history)
+
+        return captcha_quiz_order
+
 

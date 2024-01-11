@@ -35,5 +35,8 @@ def validate_and_create_slices(sender, instance, created, **kwargs):
             
             no_of_slice_objects = (slice_count)**2
             for i in range(1, no_of_slice_objects+1):
-                ImageSlice.objects.create(root_image=instance, slice_name=f"{filename}_{i}")
+                if i <= 9:
+                    ImageSlice.objects.create(root_image=instance, slice_name=f"{filename}_0{i}")
+                else:
+                    ImageSlice.objects.create(root_image=instance, slice_name=f"{filename}_{i}")
 

@@ -6,7 +6,7 @@ from django.template import loader, RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user
 
-from .models import CaptchaImage, UserResponses
+from .models import CaptchaImage, UserResponses, get_captcha_order
 
 import json
 
@@ -28,17 +28,6 @@ def index(request):
         "captchalist": captchalist,
     }
 
-    user = get_user(request)
-    # Game.get_captcha_set(user=user)
-
-    solved_history = list(UserResponses.objects.distinct().filter(user=user))
-    solved_history_nondistinct = list(UserResponses.objects.filter(user=user))
-    entire_roster = list(CaptchaImage.objects.values_list("pk", flat=True))
-
-    print('solved history distinct', solved_history)
-    print('non distinct', solved_history_nondistinct)
-    print('entire roster', entire_roster)
-
     return HttpResponse(template.render(context, request))
 
 # add pagination here
@@ -46,19 +35,13 @@ def index(request):
 
 def begin(request):
     template = loader.get_template("captchapractice/begin.html")
-
-    img_slice_list = [
-        "gojo_1", "gojo_2", "gojo_3",
-        "gojo_4", "gojo_5", "gojo_6",
-        "gojo_7", "gojo_8", "gojo_9", 
-    ]
     
-    prompt = "Select nanami"
-    # remove this and see what's being used in the html
+    user = get_user(request)
+    captcha_order = get_captcha_order(user)
+    print(captcha_order, 'is this begin reached')
 
     context = {
-        "img_slice_list": img_slice_list,
-        "prompt": prompt,
+        "captcha_order": captcha_order,
         }
 
     return HttpResponse(template.render(context, request))
@@ -76,7 +59,6 @@ def selection(request, image_id):
         context = {
             "img_slice_list": img_slice_list,
             "img_object": img_object,
-            "image_id": image_id, # you can remove this as well
             }
 
         return HttpResponse(template.render(context, request))
