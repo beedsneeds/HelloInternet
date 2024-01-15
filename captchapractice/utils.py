@@ -2,6 +2,8 @@ from itertools import product
 from PIL import Image
 import os 
 
+from .models import ImageSlice
+
 
 def validate_dimensions(instance, dir_in, dir_out):
     filename = str(instance.image)  
@@ -24,7 +26,7 @@ def validate_dimensions(instance, dir_in, dir_out):
     return True
 
 
-def make_slices(filename, slice_count, dir_in, dir_out):
+def make_image_slices(filename, slice_count, dir_in, dir_out, instance):
     img_name = f'{filename}.jpg'
     pre_img = Image.open(os.path.join(dir_in, img_name))
 
@@ -35,16 +37,42 @@ def make_slices(filename, slice_count, dir_in, dir_out):
     # Divides the image into slice_count rows
     s_len = w // slice_count  
 
-    k = 1
+    filename_list = []
+    no_of_slice_objects = (slice_count)**2
+    for k in range(1, no_of_slice_objects+1):
+        if k <= 9:
+            filename_list.append(f'{filename}_0{k}')
+        else:
+            filename_list.append(f'{filename}_{k}')
+        print(filename_list[k-1])
+    
+    k = 0
     grid = product(range(0, h-h%s_len, s_len), range(0, w-w%s_len, s_len))
     for i, j in grid:
-        box = (j, i, j+s_len, i+s_len)
-        if k <= 9:
-            out = os.path.join(dir_out, f'{filename}_0{k}.jpg')
-        else:
-            out = os.path.join(dir_out, f'{filename}_{k}.jpg')
+        box = (j, i, j+s_len, i+s_len)        
+        out = os.path.join(dir_out, f'{filename_list[k]}.jpg')
         img.crop(box).save(out)
+        ImageSlice.objects.create(root_image=instance, slice_name=filename_list[k])
         k +=1
+    
+    
+    # k = 1
+    # grid = product(range(0, h-h%s_len, s_len), range(0, w-w%s_len, s_len))
+    # for i, j in grid:
+    #     box = (j, i, j+s_len, i+s_len)
+    #     if k <= 9:
+    #         out = os.path.join(dir_out, f'{filename}_0{k}.jpg')
+    #     else:
+    #         out = os.path.join(dir_out, f'{filename}_{k}.jpg')
+    #     img.crop(box).save(out)
+    #     k +=1
+
+    # no_of_slice_objects = (slice_count)**2
+    # for i in range(1, no_of_slice_objects+1):
+    #     if i <= 9:
+    #         ImageSlice.objects.create(root_image=instance, slice_name=f"{filename}_0{i}")
+    #     else:
+    #         ImageSlice.objects.create(root_image=instance, slice_name=f"{filename}_{i}")
 
 
 # def create_slice_objects(filename, slice_count, instance):

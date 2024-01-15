@@ -38,7 +38,6 @@ def begin(request):
     
     user = get_user(request)
     captcha_order = get_captcha_order(user)
-    print(captcha_order, 'is this begin reached')
 
     context = {
         "captcha_order": captcha_order,

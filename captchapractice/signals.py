@@ -4,8 +4,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
-from .models import CaptchaImage, ImageSlice
-from .utils import validate_dimensions, make_slices
+from .models import CaptchaImage
+from .utils import validate_dimensions, make_image_slices
 
 import os 
 
@@ -30,13 +30,5 @@ def validate_and_create_slices(sender, instance, created, **kwargs):
 
             filename = instance.image_name
             slice_count = instance.slice_count
-            make_slices(filename, slice_count, up_image_out, slice_out)
-            # create_slice_objects(filename, slice_count, instance)
-            
-            no_of_slice_objects = (slice_count)**2
-            for i in range(1, no_of_slice_objects+1):
-                if i <= 9:
-                    ImageSlice.objects.create(root_image=instance, slice_name=f"{filename}_0{i}")
-                else:
-                    ImageSlice.objects.create(root_image=instance, slice_name=f"{filename}_{i}")
+            make_image_slices(filename, slice_count, up_image_out, slice_out, instance)
 

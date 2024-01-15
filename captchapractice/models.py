@@ -13,7 +13,7 @@ from random import sample
     Configured a 'post-save' signal:
         When an instance is created, a signal is sent (signals.py) 
         to automatically create (slice_count**2) image slices.
-            Naming system in line with image slicer (make_slices) fn
+            Naming system in line with image slicer (make_image_slices) fn
         To modify, only fiddle with signals.py.
         To configure for the first time or remove, look in apps.py
             (probably the most involved method compared to overriding the 
@@ -100,6 +100,7 @@ class ImageSliceForm(ModelForm):
 class Game(models.Model):
     # This class doesn't need to exist. The methods could be transplanted somewhere else.
     # It's a placeholder for future functionality
+    # delete when porting to new DB
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     
 
@@ -109,6 +110,7 @@ class UserResponses(models.Model):
     response_json = models.TextField(null=True, max_length=800)   
         # max length dependant on how large the image grid is + length of imageslice names
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    # percieved_inaccuracy = models.BooleanField(default=False)
 
     def evaluate_response(correct_choices, selected_choices):
         selected = set(selected_choices)
