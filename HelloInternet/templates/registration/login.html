@@ -4,6 +4,9 @@
 
 
 {% block content %}
+
+<div id="centre-div">
+
     {% if form.errors %}
         <p>Your username and password didn't match. Please try again.</p>
     {% endif %}
@@ -35,8 +38,13 @@
                 </tr>
             </table>
             <input type="submit" value="Log In">
-            <input type="hidden" name="next"  value="{{next}}">
+            <input type="hidden" name="next" value="{{next}}">
         </form>
+        <p>New User? 
+            <a href="{% url 'captchapractice:create new user' %}?next={{ request.path }}" class="line2">Create an account       
+            </a></p>
     {% endif %}
+
+</div>
 
 {% endblock %}

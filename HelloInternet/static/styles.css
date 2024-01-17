@@ -166,25 +166,17 @@ li {
 
 
 /* found in begin.html */
-#central-area {
+#centre-div {
     display: flex;
     flex-direction: column;
 
     justify-content: center;
     align-items: center;
-    border: 2px solid #000;
     padding: 20px;
 
-    /* opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.25s ease-in-out; */
-    /* keep this value equal with the setTimeout setting */
 }
 
-/* #central-area.fade-in {
-    opacity: 1;
-    visibility: visible;
-} */
+
 
 /* image grid behaviour*/
 

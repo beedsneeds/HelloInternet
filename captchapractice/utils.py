@@ -54,28 +54,3 @@ def make_image_slices(filename, slice_count, dir_in, dir_out, instance):
         img.crop(box).save(out)
         ImageSlice.objects.create(root_image=instance, slice_name=filename_list[k])
         k += 1
-
-    # k = 1
-    # grid = product(range(0, h-h%s_len, s_len), range(0, w-w%s_len, s_len))
-    # for i, j in grid:
-    #     box = (j, i, j+s_len, i+s_len)
-    #     if k <= 9:
-    #         out = os.path.join(dir_out, f'{filename}_0{k}.jpg')
-    #     else:
-    #         out = os.path.join(dir_out, f'{filename}_{k}.jpg')
-    #     img.crop(box).save(out)
-    #     k +=1
-
-    # no_of_slice_objects = (slice_count)**2
-    # for i in range(1, no_of_slice_objects+1):
-    #     if i <= 9:
-    #         ImageSlice.objects.create(root_image=instance, slice_name=f"{filename}_0{i}")
-    #     else:
-    #         ImageSlice.objects.create(root_image=instance, slice_name=f"{filename}_{i}")
-
-
-# def create_slice_objects(filename, slice_count, instance):
-#     name, ext = os.path.splitext(filename)
-#     no_of_slices = (slice_count)**2
-#     for i in range(1, no_of_slices+1):
-#         ImageSlice.objects.create(root_image=instance, slice_name=f"{name}_{i}")

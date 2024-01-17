@@ -153,8 +153,8 @@ def get_captcha_order(user):
     solved_history = set(
         UserResponses.objects.filter(user=user).values_list("root_image", flat=True)
     )
-    # unsolved_captcha_list = CaptchaImage.objects.exclude(id__in=solved_history)
-    unsolved_captcha_list = CaptchaImage.objects.all()
+    unsolved_captcha_list = CaptchaImage.objects.exclude(id__in=solved_history)
+    # unsolved_captcha_list = CaptchaImage.objects.all()
     # For testing the bottom line is picked. For production, use the top line
 
     # It creates a randomized list of captcha primary keys. Total length of quiz is 4:
@@ -177,3 +177,6 @@ def get_captcha_order(user):
     print("solved history", solved_history)
 
     return captcha_quiz_order
+
+def username_exists(username):
+    return User.objects.filter(username=username).exists()

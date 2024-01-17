@@ -1,12 +1,14 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.template import loader, RequestContext
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user
+from django.contrib.auth import get_user, login
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
-from .models import CaptchaImage, UserResponses, get_captcha_order
+from .models import CaptchaImage, UserResponses, get_captcha_order, username_exists
 
 import json
 
@@ -33,7 +35,7 @@ def index(request):
 
 # add pagination here
 
-
+@login_required
 def begin(request):
     template = loader.get_template("captchapractice/begin.html")
 
@@ -100,3 +102,26 @@ def selection(request, image_id):
 
     else:
         return JsonResponse({"error": "Method Not Allowed"}, status=405)
+
+def create_new_user(request):
+    if request.method == "GET":
+        template = loader.get_template("create_new_user.html")
+        context = {
+        }
+
+        return HttpResponse(template.render(context, request))
+    
+    elif request.method == "POST":
+        username = request.POST.get('username')
+        if username_exists(username):
+            return HttpResponseRedirect(reverse("login"))
+
+        password = request.POST.get('password')
+        
+        hashed_password = make_password(password)
+        user = User.objects.create(username=username, password=hashed_password)
+
+        login(request, user)
+
+        # Redirect to a success page or any other appropriate action
+        return HttpResponseRedirect(reverse("captchapractice:home"))
