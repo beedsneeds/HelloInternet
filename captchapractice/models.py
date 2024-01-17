@@ -9,7 +9,7 @@ from random import sample
 
 # Create your models here.
 
-'''
+"""
     Configured a 'post-save' signal:
         When an instance is created, a signal is sent (signals.py) 
         to automatically create (slice_count**2) image slices.
@@ -33,15 +33,22 @@ from random import sample
         Just writing custom views outside of django-admin, for my specific needs 
         Trying to incorporate async JS in admin
 
-'''
+"""
 
 
 class CaptchaImage(models.Model):
-    image = models.ImageField(upload_to="admin uploads/", null=True)  # MEDIA_ROOT/admin uploads/
-    image_name = models.CharField(max_length=10, unique=True, 
-                                  help_text='Enter an abbreviated image name (max length 10 characters). Do not include an extension')
-    prompt_text = models.CharField(max_length=200, 
-                                  help_text='The prompt the user sees. Eg: "Select all the cars in the image" ') 
+    image = models.ImageField(
+        upload_to="admin uploads/", null=True
+    )  # MEDIA_ROOT/admin uploads/
+    image_name = models.CharField(
+        max_length=10,
+        unique=True,
+        help_text="Enter an abbreviated image name (max length 10 characters). Do not include an extension",
+    )
+    prompt_text = models.CharField(
+        max_length=200,
+        help_text='The prompt the user sees. Eg: "Select all the cars in the image" ',
+    )
 
     SLICE_CHOICES = [
         (3, "3x3 Grid"),
@@ -49,7 +56,7 @@ class CaptchaImage(models.Model):
         (5, "5x5 Grid"),
     ]
     slice_count = models.IntegerField(choices=SLICE_CHOICES, default=3)
-    
+
     DIFFICULTY = [
         (1, "Easy"),
         (2, "Medium"),
@@ -59,14 +66,16 @@ class CaptchaImage(models.Model):
 
     def __str__(self):
         return self.prompt_text
-    
+
     def get_absolute_url(self):
-        return reverse('captchapractice:selection', args=[str(self.id)])
-    
+        return reverse("captchapractice:selection", args=[str(self.id)])
+
     def correct_choices(self, image_id):
-        result = list(ImageSlice.objects.filter(root_image=image_id)
-                      .filter(element_presence=1)
-                      .values_list("slice_name", flat=True))
+        result = list(
+            ImageSlice.objects.filter(root_image=image_id)
+            .filter(element_presence=1)
+            .values_list("slice_name", flat=True)
+        )
 
         return result
 
@@ -76,6 +85,8 @@ class CaptchaImage(models.Model):
 
     # class Meta:
     #     ordering = ['-difficulty_level']
+
+
 # using order_by query instead from within views
 
 
@@ -87,9 +98,10 @@ class ImageSlice(models.Model):
 
     def __str__(self):
         return self.slice_name
-    
+
     class Meta:
-        ordering = ['slice_name']
+        ordering = ["slice_name"]
+
 
 class ImageSliceForm(ModelForm):
     class Meta:
@@ -102,13 +114,15 @@ class Game(models.Model):
     # It's a placeholder for future functionality
     # delete when porting to new DB
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    
+
 
 class UserResponses(models.Model):
-    root_image = models.ForeignKey(CaptchaImage, on_delete=models.SET_NULL, null=True, blank=True)
-    # response_json = models.JSONField(null=True) 
-    response_json = models.TextField(null=True, max_length=800)   
-        # max length dependant on how large the image grid is + length of imageslice names
+    root_image = models.ForeignKey(
+        CaptchaImage, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    # response_json = models.JSONField(null=True)
+    response_json = models.TextField(null=True, max_length=800)
+    # max length dependant on how large the image grid is + length of imageslice names
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     # percieved_inaccuracy = models.BooleanField(default=False)
 
@@ -117,7 +131,7 @@ class UserResponses(models.Model):
         correct = set(correct_choices)
 
         # Members that are 'correct' in the traditional sense (they occur in both sets // set intersection)
-        true_positives = correct & selected  
+        true_positives = correct & selected
         # Members that were wrong. That is, those that were not 'correct' but were selected nonetheless
         false_postives = selected - correct
         # Members that were 'correct' but weren't selected
@@ -127,7 +141,7 @@ class UserResponses(models.Model):
         if selected == correct:
             evaluation = "You are correct!"
         elif len(false_negatives) > 0 and len(false_postives) == 0:
-            evaluation = 'Uh-oh! You missed an image or two.'
+            evaluation = "Uh-oh! You missed an image or two."
         else:
             evaluation = "Oops, you got it wrong!"
 
@@ -136,26 +150,30 @@ class UserResponses(models.Model):
 
 # this is a class-less method because I don't know what I want to persisently store in 'Game' model
 def get_captcha_order(user):
-        solved_history = set(UserResponses.objects.filter(user=user).values_list("root_image", flat=True))
-        # unsolved_captcha_list = CaptchaImage.objects.exclude(id__in=solved_history)
-        unsolved_captcha_list = CaptchaImage.objects.all()
-        # For testing the bottom line is picked. For production, use the top line
+    solved_history = set(
+        UserResponses.objects.filter(user=user).values_list("root_image", flat=True)
+    )
+    # unsolved_captcha_list = CaptchaImage.objects.exclude(id__in=solved_history)
+    unsolved_captcha_list = CaptchaImage.objects.all()
+    # For testing the bottom line is picked. For production, use the top line
 
-        # It creates a randomized list of captcha primary keys. Total length of quiz is 4:
-        # The first will always be easy difficulty. 2nd medium. 3rd & 4th will be hard (because hard ones are interesting)
-        captcha_quiz_order = []
-        for i in range(1, 4):
-            sorted_by_difficulty = list(unsolved_captcha_list.filter(difficulty_level=i).values_list("pk", flat=True))
-            if i == 3: 
-                temp_name = sample(sorted_by_difficulty, 2)
-                captcha_quiz_order.append(temp_name.pop())
-                captcha_quiz_order.append(temp_name.pop())
-            else:     
-                captcha_quiz_order.append(sample(sorted_by_difficulty, 1).pop())
-            
-        print('captcha_quiz_order', captcha_quiz_order)
-        print('solved history', solved_history)
+    # It creates a randomized list of captcha primary keys. Total length of quiz is 4:
+    # The first will always be easy difficulty. 2nd medium. 3rd & 4th will be hard (because hard ones are interesting)
+    captcha_quiz_order = []
+    for i in range(1, 4):
+        sorted_by_difficulty = list(
+            unsolved_captcha_list.filter(difficulty_level=i).values_list(
+                "pk", flat=True
+            )
+        )
+        if i == 3:
+            temp_name = sample(sorted_by_difficulty, 2)
+            captcha_quiz_order.append(temp_name.pop())
+            captcha_quiz_order.append(temp_name.pop())
+        else:
+            captcha_quiz_order.append(sample(sorted_by_difficulty, 1).pop())
 
-        return captcha_quiz_order
+    print("captcha_quiz_order", captcha_quiz_order)
+    print("solved history", solved_history)
 
-
+    return captcha_quiz_order

@@ -21,10 +21,8 @@ from django.views.generic import RedirectView
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-
-    path('captchapractice/', include('captchapractice.urls')),
-
-    path('', RedirectView.as_view(url='captchapractice/')),
+    path("admin/", admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("captchapractice/", include("captchapractice.urls")),
+    path("", RedirectView.as_view(url="captchapractice/")),
 ]

@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,39 +14,125 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='CaptchaImage',
+            name="CaptchaImage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(null=True, upload_to='admin uploads/')),
-                ('image_name', models.CharField(help_text='Enter an abbreviated image name (max length 10 characters). Do not include an extension', max_length=10, unique=True)),
-                ('prompt_text', models.CharField(help_text='The prompt the user sees. Eg: "Select all the cars in the image" ', max_length=200)),
-                ('slice_count', models.IntegerField(choices=[(3, '3x3 Grid'), (4, '4x4 Grid'), (5, '5x5 Grid')], default=3)),
-                ('difficulty_level', models.IntegerField(choices=[(1, 'Easy'), (2, 'Medium'), (3, 'Hard')], default=1)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("image", models.ImageField(null=True, upload_to="admin uploads/")),
+                (
+                    "image_name",
+                    models.CharField(
+                        help_text="Enter an abbreviated image name (max length 10 characters). Do not include an extension",
+                        max_length=10,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "prompt_text",
+                    models.CharField(
+                        help_text='The prompt the user sees. Eg: "Select all the cars in the image" ',
+                        max_length=200,
+                    ),
+                ),
+                (
+                    "slice_count",
+                    models.IntegerField(
+                        choices=[(3, "3x3 Grid"), (4, "4x4 Grid"), (5, "5x5 Grid")],
+                        default=3,
+                    ),
+                ),
+                (
+                    "difficulty_level",
+                    models.IntegerField(
+                        choices=[(1, "Easy"), (2, "Medium"), (3, "Hard")], default=1
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='UserResponses',
+            name="UserResponses",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('response_json', models.TextField(max_length=800, null=True)),
-                ('root_image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='captchapractice.captchaimage')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("response_json", models.TextField(max_length=800, null=True)),
+                (
+                    "root_image",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="captchapractice.captchaimage",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ImageSlice',
+            name="ImageSlice",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slice_name', models.CharField(max_length=13)),
-                ('element_presence', models.BooleanField(default=False)),
-                ('root_image', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='captchapractice.captchaimage')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("slice_name", models.CharField(max_length=13)),
+                ("element_presence", models.BooleanField(default=False)),
+                (
+                    "root_image",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="captchapractice.captchaimage",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Game',
+            name="Game",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

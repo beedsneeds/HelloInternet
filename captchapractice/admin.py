@@ -7,14 +7,15 @@ from django.shortcuts import redirect
 
 from .models import CaptchaImage, ImageSlice, ImageSliceForm
 
+
 class SliceInline(admin.StackedInline):
     model = ImageSlice
     form = ImageSliceForm
     extra = 0
+
 
 class CaptchaAdmin(admin.ModelAdmin):
     inlines = [SliceInline]
 
 
 admin.site.register(CaptchaImage, CaptchaAdmin)
-

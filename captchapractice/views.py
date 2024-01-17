@@ -12,11 +12,11 @@ import json
 
 
 def home(request):
-
     context = None
     return render(request, "captchapractice/home.html", context)
 
-# Start here or you can view the captcha gallery (index) and pick what captcha to solve 
+
+# Start here or you can view the captcha gallery (index) and pick what captcha to solve
 
 
 # Rename to image index
@@ -30,45 +30,44 @@ def index(request):
 
     return HttpResponse(template.render(context, request))
 
+
 # add pagination here
 
 
 def begin(request):
     template = loader.get_template("captchapractice/begin.html")
-    
+
     user = get_user(request)
     captcha_order = get_captcha_order(user)
 
     context = {
         "captcha_order": captcha_order,
-        }
+    }
 
     return HttpResponse(template.render(context, request))
 
 
 @login_required
 def selection(request, image_id):
-
     img_object = get_object_or_404(CaptchaImage, pk=image_id)
     img_slice_list = img_object.get_img_slice_list(image_id=image_id)
 
     if request.method == "GET":
-
         template = loader.get_template("captchapractice/selection.html")
         context = {
             "img_slice_list": img_slice_list,
             "img_object": img_object,
-            }
+        }
 
         return HttpResponse(template.render(context, request))
 
     elif request.method == "POST":
-        try: 
+        try:
             # POST sends a json response
-            selected_choices = json.loads(request.body.decode('utf-8'))
+            selected_choices = json.loads(request.body.decode("utf-8"))
         except json.JSONDecodeError as err:
-            return JsonResponse({'status': 'error', 'message': str(err)}, status=400)
-            
+            return JsonResponse({"status": "error", "message": str(err)}, status=400)
+
         # Saving to db
         response = UserResponses.objects.create(root_image=img_object)
         response.response_json = json.dumps(selected_choices)
@@ -76,7 +75,12 @@ def selection(request, image_id):
         response.save()
 
         correct_choices = img_object.correct_choices(image_id=image_id)
-        evaluation, true_positives, false_postives, false_negatives = UserResponses.evaluate_response(correct_choices, selected_choices)
+        (
+            evaluation,
+            true_positives,
+            false_postives,
+            false_negatives,
+        ) = UserResponses.evaluate_response(correct_choices, selected_choices)
 
         context = {
             "img_slice_list": img_slice_list,
@@ -89,12 +93,10 @@ def selection(request, image_id):
 
         # The view processes the post request and the corresponding response has to be loaded asynchronously.
         # Therefore, the template is rendered to string which is then loaded onto the page through DOM manipulation in JS
-        rendered_template = loader.render_to_string("captchapractice/selection.html", context, request)
-        return JsonResponse({'html': rendered_template})
+        rendered_template = loader.render_to_string(
+            "captchapractice/selection.html", context, request
+        )
+        return JsonResponse({"html": rendered_template})
 
     else:
-        return JsonResponse({'error': 'Method Not Allowed'}, status=405)
-
-
-
-
+        return JsonResponse({"error": "Method Not Allowed"}, status=405)
