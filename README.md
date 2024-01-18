@@ -21,12 +21,10 @@ If the system is not confident that you are human, it prompts you with additiona
 
 ### Detailed Design
 
-###### 1. Uploading Captcha
-
+##### 1. Uploading Captcha
 Superusers and admins, through Django's admin interface can contribute their own images for captcha. The admin site is very modular. Thus both the structure and functioning of the admin site has been altered: on Captcha creation, the image is automatically validated and a specified number related models (the *ImageSlice* model which represents a single image of the Captcha grid) using Django's signal dispatcher. The manual, and perhaps tedious, part of this process is selecting which images in the grid display the object the Captcha requires you to select. In the future, I'd like for some type of computer vision to solve this.
 
-###### 2. Users
-
+##### 2. Users
 Users can sign up with a unique username. Django's password validation is turned off to make account creation easier as one's almost expected to try their hand at the captcha multiple times. The responses are saved so that users only view a particular captcha once when trying the 'captcha challenge'. 
 
 
