@@ -49,6 +49,14 @@ def begin(request):
     return HttpResponse(template.render(context, request))
 
 
+def end(request):
+    template = loader.get_template("captchapractice/end.html")
+
+    context = {}
+
+    return HttpResponse(template.render(context, request))
+
+
 @login_required
 def selection(request, image_id):
     img_object = get_object_or_404(CaptchaImage, pk=image_id)

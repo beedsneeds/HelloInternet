@@ -161,20 +161,23 @@ def get_captcha_order(user):
     # The first will always be easy difficulty. 2nd medium. 3rd & 4th will be hard (because hard ones are interesting)
     captcha_quiz_order = []
     for i in range(1, 4):
-        sorted_by_difficulty = list(
+        filtered_by_difficulty = list(
             unsolved_captcha_list.filter(difficulty_level=i).values_list(
                 "pk", flat=True
             )
         )
-        if i == 3:
-            temp_name = sample(sorted_by_difficulty, 2)
+
+        # Skips adding a captcha to the quiz list if there are none of that difficulty type left unanswered
+        # Reluctant to add 'magic numbers' 1, 2, 3 here. Will fix this hardcoded value eventually
+        if len(filtered_by_difficulty) == 0:
+            continue
+
+        if i == 3 and len(filtered_by_difficulty) >= 2:
+            temp_name = sample(filtered_by_difficulty, 2)
             captcha_quiz_order.append(temp_name.pop())
             captcha_quiz_order.append(temp_name.pop())
         else:
-            captcha_quiz_order.append(sample(sorted_by_difficulty, 1).pop())
-
-    print("captcha_quiz_order", captcha_quiz_order)
-    print("solved history", solved_history)
+            captcha_quiz_order.append(sample(filtered_by_difficulty, 1).pop())
 
     return captcha_quiz_order
 

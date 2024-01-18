@@ -1,0 +1,148 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+
+
+{% block content %}
+
+<h2> Let's try Async</h2>
+
+<div id="import-content" class="fade-in">
+
+    {{ captcha_order | json_script:"captcha_order_array" }}
+
+
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const captchaOrderArray = JSON.parse(document.querySelector("#captcha_order_array").textContent);
+        console.log(captchaOrderArray)
+        let currentPage = 0;
+
+        
+        // I believe method and formData are no longer used
+        async function loadPage(pageNumber, method = 'GET', formData = null, endReached = false) {
+
+            if (endReached == false) {
+                const url = `/captchapractice/${pageNumber}/`;
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error: ${response.status}`);
+                    }
+
+                    const htmlResponse = await response.text();
+                    renderImportContents(htmlResponse, '#main-prompt', '#import-content');
+
+                    runScriptAfterAsync()
+                    const submitFormButton = querySelectorAfterAsync('#submit-form-button');
+                    submitFormButton.addEventListener('click', handleSubmit);
+
+                } catch (error) {
+                    console.log("async fn CATCH");
+                    console.error('Error while Fetching:', error);
+                }
+            } else {
+                console.log("are we reaching the loadpage end?")
+                const url = '/captchapractice/end/';
+                try {
+                    const response = await fetch(url);
+                    console.log("so we're failing here")
+                    if (!response.ok) {
+                        throw new Error(`HTTP error: ${response.status}`);
+                    }
+
+                    const htmlResponse = await response.text();
+                    renderImportContents(htmlResponse, '#main-prompt', '#import-content');
+
+                } catch (error) {
+                    console.log("async fn CATCH");
+                    console.error('Error while Fetching:', error);
+                }
+            }
+        }
+
+
+        // Helper function to loadPage. Handles what and how the central div displays
+        function renderImportContents(htmldoc, fragmentSelector, parentSelector) {
+            // const parser = new DOMParser();
+            // const doc = parser.parseFromString(htmldoc, 'text/html');
+            // const htmlFragment = doc.querySelector(fragmentSelector);
+
+            const tempContainer = document.createElement('div');
+            tempContainer.innerHTML = htmldoc;
+            const htmlFragment = tempContainer.querySelector(fragmentSelector);
+
+            const parentDiv = document.querySelector(parentSelector);
+            parentDiv.innerHTML = '';
+            parentDiv.appendChild(htmlFragment);
+
+            requestAnimationFrame(() => {
+                parentDiv.classList.toggle('fade-in');
+            });
+            setTimeout(() => {
+                parentDiv.classList.toggle('fade-in');
+            }, 250);
+        }
+
+
+        function runScriptAfterAsync() {
+            if (document.readyState !== "loading") {
+                const script = document.createElement('script');
+                script.src = "{% static 'captchapractice/selection.js' %}";
+                document.body.appendChild(script);
+                console.log("A new script has been added");
+            }
+            else {
+                console.log("runScriptAfterAsync seems to not be loading");
+            };
+        }
+
+
+        function querySelectorAfterAsync(selector) {
+            if (document.readyState !== "loading") {
+                const selectedQuery = document.querySelector(selector);   
+                if (selectedQuery) {
+                    console.log("selectedQuery exists");
+                    return selectedQuery;
+                } else {
+                    console.error("Error: 'response-form' not found in the DOM");
+                }
+            }
+            else {
+                console.log("querySelectorAfterAsync seems to not be loading");
+            };
+        }
+
+
+        async function handleSubmit(event) {
+            if (document.readyState !== "loading") {
+                await submitForm(event);
+                const nextButton = querySelectorAfterAsync('#next-button');
+                nextButton.addEventListener('click', handleNext);
+            }
+
+        }
+
+        function handleNext() {
+            currentPage++;
+            if (currentPage == captchaOrderArray.length){
+                console.log("we're reaching the end")
+                loadPage(captchaOrderArray[currentPage], endReached = true);
+            }
+            else {
+                loadPage(captchaOrderArray[currentPage]);
+            }
+        }
+
+
+        loadPage(captchaOrderArray[currentPage]);
+    });
+
+
+</script>
+
+
+{% endblock content %}

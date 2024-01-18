@@ -32,7 +32,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG")
+DEBUG = os.environ.get("DEBUG", False)
 # ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
 
 # DEBUG = False
@@ -42,12 +42,10 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = ["https://hello-internet-c2d83d7d2d7e.herokuapp.com/"]
-# Since the applications uses CSRF protection,
-# list of trusted origins for unsafe requests (e.g. POST)
+# Since the application uses CSRF protection, list of trusted origins for unsafe requests (e.g. POST)
 
 
 # Application definition
-
 INSTALLED_APPS = [
     "captchapractice.apps.CaptchapracticeConfig",
     "django.contrib.admin",
@@ -93,7 +91,6 @@ WSGI_APPLICATION = "HelloInternet.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -108,7 +105,7 @@ if "DATABASE_URL" in os.environ:
     )
 
 
-# Password validation
+# Password validation - turning this off because its overkill for this app
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 # AUTH_PASSWORD_VALIDATORS = [

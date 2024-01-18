@@ -1,0 +1,15 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+
+
+{% block content %}
+
+<div id="main-prompt">
+
+    <p> We're reached the end!!</p>
+    <p>Want to go again?</p><a href="{% url 'captchapractice:begin' %}" class="button-link">Retry</a>
+
+</div>
+
+{% endblock content %}
