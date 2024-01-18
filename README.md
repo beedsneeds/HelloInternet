@@ -1,38 +1,36 @@
 The site resides at [heroku](https://hello-internet-c2d83d7d2d7e.herokuapp.com/captchapractice/). It might take a second to wake up.
 
-### Purpose of this Project
+### Project Purpose
 
-The goal of this project is *not* to build a 1-to-1 clone of Google's reCaptcha since its scope is incredibly large. Rather, we aim to mimic the experience when solving various "Are you human?" challenges found across the internet. 
+The objective of this project is *not* to create an exact replica of Google's reCaptcha due to its extensive scope. Instead, my aim is to simulate the user experience encountered when solving various "Are you human?" challenges commonly found on the internet.
 
-This (as of Jan '24) is still a work-in-progress and is not the final product envisioned. Nonetheless, this is a demonstration of my learning; and the complexity of this project will improve as my general experience does. 
+As of January 2024, this project is still a work in progress and does not represent the final envisioned product. Nevertheless, it serves as a demonstration of my learning, and the project's complexity will evolve as my overall experience grows.
+
 
 ### Background
 
-To protect websites from fraud and abuse, websites employ a security measure to distinguish between human users and automated bots. Google's reCAPTCHA v2's base layer is the ***invisible* reCAPTCHA** which automatically analyses a user's actions (mouse movements, keyboard inputs, human-like patterns and signals) to determine if the user is likely human.
+Websites implement security measures to safeguard against fraud and abuse by distinguishing between human users and automated bots. Google's reCAPTCHA v2 incorporates an **invisible reCAPTCHA** as its base layer, which automatically analyzes user actions (mouse movements, keyboard inputs, human-like patterns, and signals) to determine the likelihood of the user being human.
 
-If the system is not confident that you are human, it prompts you with additional verification challenges. One type of challenge asks you to "select all images with cars" or  or "Select all images containing street signs" or some variant of this prompt.
+If the system is uncertain if the user is human, it presents additional verification challenges. One such challenge involves selecting images based on a specific prompt, such as "select all images with cars" or "select all images containing street signs."
+
 
 ### Requirements
-
-1. The superuser can upload images. The app currently handles the formatting and display logic, however, the superuser must manually choose which objects the Captcha tests for. 
-2. Users can view a list of captcha (signed in or not).
-3. Users can solve any individual captcha or can choose to solve a series of unique ones (signed in to ensure the same captcha is not repeated for a given account).
+1. The superuser can upload images. The app manages the formatting and display logic, however, the superuser must manually choose which objects the Captcha tests for. 
+2. Users can view a list of captcha (whether signed in or not).
+3. Users can solve individual captchas or choose to solve a series of unique ones (signing in ensures no repetition for a given account).
 
 
 ### Detailed Design
 
 ##### 1. Uploading Captcha
-Superusers and admins, through Django's admin interface can contribute their own images for captcha. The admin site is very modular. Thus both the structure and functioning of the admin site has been altered: on Captcha creation, the image is automatically validated and a specified number related models (the *ImageSlice* model which represents a single image of the Captcha grid) using Django's signal dispatcher. The manual, and perhaps tedious, part of this process is selecting which images in the grid display the object the Captcha requires you to select. In the future, I'd like for some type of computer vision to solve this.
+Superusers and admins, using Django's admin interface, can contribute images for captchas. The admin site, being modular, has been altered structurally and functionally: using Django's signal dispatcher, the image is automatically validated upon captcha creation, after which a number related models (the *ImageSlice* model representing a single image of the Captcha grid) are created. The manual, and perhaps tedious, part of this process is selecting which images in the grid display the object the Captcha requires you to select. In the future, I'd like for some type of computer vision to solve this.
 
 ##### 2. Users
-Users can sign up with a unique username. Django's password validation is turned off to make account creation easier as one's almost expected to try their hand at the captcha multiple times. The responses are saved so that users only view a particular captcha once when trying the 'captcha challenge'. 
-
+Users can sign up with a unique username. Django's password validation is disabled to simplify account creation, considering users may attempt the captcha multiple times. Responses are saved to ensure users view a particular captcha only once across all 'captcha challenges'.
 
 
 ### Future Work:
-1. Automatically identifying objects and providing an admin the option to choose which image the captcha should evaluate for is a long-term goal.
-2. At this moment, only a single *type* of captcha has been implemented. I have two more captcha-types in the pipeline.
-3. Provide the option for users to report if a captcha has not been evaluated properly. When paired with Future Work #1, it should help provide feedback on how much of this process can be automated.
-4. Speed: I've incorporated asynchronous Javascript to smooth out the experience. However, in production, server response times are slow and image loading is also noticeably slower. I want to explore switching to a geographically closer compute instance (EC2) as well as test if a CDN in front of WhiteNoise will help. 
-
-
+1. Automatically identify objects and provide admins the option to choose which object within the image should the captcha evaluate for. This is a long-term goal that I'll constantly be moving towards.
+2. At this moment, only a single *type* of captcha has been implemented. I have two more captcha-types in the pipeline. 
+3. Provide the option for users to report if a captcha has not been evaluated properly. When paired with #1, it should help aggregate public feedback on how much of this captcha creation process can be automated.
+4. Speed: I've incorporated asynchronous Javascript to smooth out the experience. However, in production, image load times are slow and server response times are noticeably much slower. I want to explore switching to a geographically closer compute instance (EC2 in Mumbai, compared to the current US-based Heroku). Additionally, its worth seeing if a CDN [in front of](https://whitenoise.readthedocs.io/en/stable/#isn-t-serving-static-files-from-python-horribly-inefficient) WhiteNoise will further enhance performance. 
