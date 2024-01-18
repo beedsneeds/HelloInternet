@@ -43,8 +43,6 @@ def validate_and_create_slices(sender, instance, created, **kwargs):
                 "Image does not have 1:1 dimensions. Press back and retry with appropriate dimensions"
             )
         else:
-            # else just call a function that does the clice creation process
-
             filename = instance.image_name
             slice_count = instance.slice_count
             make_image_slices(filename, slice_count, up_image_out, slice_out, instance)

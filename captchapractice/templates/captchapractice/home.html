@@ -9,39 +9,30 @@
 
 
 
-    <p>You'll face a series of 4 captcha challenges</p>
+<p>You'll face a series of 4 captcha challenges</p>
 
-    {% if user.is_authenticated %}
-        <p>Logged in as: <strong>{{ user.get_username }}</strong><br></p>
-        <p>You can go ahead and start your 
-            <a href="{% url 'captchapractice:begin' %}" class="button-link">challenge</a></p>
+{% if user.is_authenticated %}
+<p>Logged in as: <strong>{{ user.get_username }}</strong><br></p>
+<p>You can go ahead and start your
+    <a href="{% url 'captchapractice:begin' %}" class="button-link">challenge</a>
+</p>
 
-    {% else %}
-    <p>
-        Please             
-        <a href="{% url 'login' %}?next={{ request.path }}" class="line2">log in</a>
-        to continue. We keep a track of your responses to not give you the same prompts in successive games.
-    </p>
-        
-    {% endif %}
-    
+{% else %}
+<p>
+    Please
+    <a href="{% url 'login' %}?next={{ request.path }}" class="line2">log in</a>
+    to continue. We keep a track of your responses to not give you the same prompts in successive games.
+</p>
+
+{% endif %}
+
 
 
 <hr>
 
-    <h3>A little primer on what to expect</h3>
-    
-    <p>
-        To protect websites from fraud and abuse, websites employ a security measure to distinguish between human users and automated bots. Google's reCAPTCHA v2's base layer is the ***invisible* reCAPTCHA** which automatically analyses a user's actions (mouse movements, keyboard inputs, human-like patterns and signals) to determine if the user is likely human.
-        <br><br>
-        If the system is not confident that you are human, it prompts you with additional verification challenges. One type of challenge asks you to "select all images with cars" or  or "Select all images containing street signs" or some variant of this prompt.
-        <br>
-    </p>
-    <p>
-        This website demonstrates the kind of captcha's I've encountered.
-        Please note, the technical complexity of these captcha will be commensurate with my skill as a developer - so don't expect a lot at this juncture.
 
-    </p>
+<p> Feel like you're being thrown into a barebones site without any context?
+    Check out the <a href="https://github.com/beedsneeds/HelloInternet/blob/main/README.md">readme</a> on GitHub.</p>
 
 
 

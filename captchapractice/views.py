@@ -32,7 +32,6 @@ def index(request):
 
     return HttpResponse(template.render(context, request))
 
-
 # add pagination here
 
 @login_required
@@ -45,21 +44,6 @@ def begin(request):
     context = {
         "captcha_order": captcha_order,
     }
-
-    return HttpResponse(template.render(context, request))
-
-
-def end(request):
-    template = loader.get_template("captchapractice/end.html")
-
-    context = {}
-
-    return HttpResponse(template.render(context, request))
-
-def empty(request):
-    template = loader.get_template("captchapractice/empty.html")
-
-    context = {}
 
     return HttpResponse(template.render(context, request))
 
@@ -140,3 +124,19 @@ def create_new_user(request):
 
         # Redirect to a success page or any other appropriate action
         return HttpResponseRedirect(reverse("captchapractice:home"))
+
+
+# These two have to be replaced by generic views.
+def end(request):
+    template = loader.get_template("captchapractice/end.html")
+
+    context = {}
+
+    return HttpResponse(template.render(context, request))
+
+def empty(request):
+    template = loader.get_template("captchapractice/empty.html")
+
+    context = {}
+
+    return HttpResponse(template.render(context, request))
