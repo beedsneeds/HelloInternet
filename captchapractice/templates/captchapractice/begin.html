@@ -46,6 +46,25 @@
             }
         }
 
+        async function loadGeneric(pageName){
+            const url = `/captchapractice/${pageName}/`;
+            try {
+                console.log("TRYing to run loadGeneric");
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error: ${response.status}`);
+                }
+
+                const htmlResponse = await response.text();
+                renderImportContents(htmlResponse, '#main-prompt', '#import-content');
+                console.log("LoadPage after async");
+
+            } catch (error) {
+                console.log("async fn CATCH");
+                console.error('Error while Fetching:', error);
+            }
+        }
+
 
         // Helper function to loadPage. Handles what and how the central div displays
         function renderImportContents(htmldoc, fragmentSelector, parentSelector) {
@@ -110,13 +129,25 @@
         }
 
         function handleNext() {
-            console.log("next button clicked");
             currentPage++;
+            //  Handling the end-of-game page
+            if (currentPage == captchaOrderArray.length){
+                console.log("we're reaching the end")
+                loadGeneric('end');
+            }
+            else {
+                loadPage(captchaOrderArray[currentPage]);
+            }
+        }
+
+        // Handling the event when the user has attempted all possible captcha
+        if (captchaOrderArray.length == 0) {
+            loadGeneric('empty');
+        } else {
             loadPage(captchaOrderArray[currentPage]);
         }
 
-
-        loadPage(captchaOrderArray[currentPage]);
+        // Handling the default action if the above does not hold true
     });
 
 

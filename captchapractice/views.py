@@ -56,6 +56,13 @@ def end(request):
 
     return HttpResponse(template.render(context, request))
 
+def empty(request):
+    template = loader.get_template("captchapractice/empty.html")
+
+    context = {}
+
+    return HttpResponse(template.render(context, request))
+
 
 @login_required
 def selection(request, image_id):
