@@ -256,7 +256,7 @@ li {
     height: 100%;
 
     position: absolute;
-    background-color: aquamarine;
+    background-color: rgb(7, 151, 103);
     opacity: 0.8;
 }
 .overlay-image-wrong {
@@ -266,7 +266,7 @@ li {
     height: 100%;
 
     position: absolute;
-    background-color: orange;
+    background-color: rgb(193, 87, 0);
     opacity: 0.5;
 }
 .overlay-image-missed {
@@ -276,7 +276,7 @@ li {
     height: 100%;
 
     position: absolute;
-    background-color: gray;
+    background-color: rgb(69, 69, 69);
     opacity: 0.5;
 }
 

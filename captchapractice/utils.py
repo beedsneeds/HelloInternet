@@ -35,7 +35,7 @@ def make_image_slices(filename, slice_count, dir_in, dir_out, instance):
     w, h = img.size
 
     # Divides the image into slice_count rows
-    s_len = w // slice_count
+    img_dim = w // slice_count
 
     filename_list = []
     no_of_slice_objects = (slice_count) ** 2
@@ -47,9 +47,12 @@ def make_image_slices(filename, slice_count, dir_in, dir_out, instance):
         print(filename_list[k - 1])
 
     k = 0
-    grid = product(range(0, h - h % s_len, s_len), range(0, w - w % s_len, s_len))
+    # Determines the the position of the top-left corner of each image. 
+    # (h // img_dim) * img_dim preferred over just h for the situation when h % img_dim produces 
+    # a non-zero remainder. h - h % img_len is also alternatively used here.
+    grid = product(range(0, (h // img_dim) * img_dim, img_dim), range(0, (w // img_dim) * img_dim, img_dim))
     for i, j in grid:
-        box = (j, i, j + s_len, i + s_len)
+        box = (j, i, j + img_dim, i + img_dim)
         out = os.path.join(dir_out, f"{filename_list[k]}.jpg")
         img.crop(box).save(out)
         ImageSlice.objects.create(root_image=instance, slice_name=filename_list[k])
