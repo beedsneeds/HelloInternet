@@ -47,10 +47,13 @@ def make_image_slices(filename, slice_count, dir_in, dir_out, instance):
         print(filename_list[k - 1])
 
     k = 0
-    # Determines the the position of the top-left corner of each image. 
-    # (h // img_dim) * img_dim preferred over just h for the situation when h % img_dim produces 
+    # Determines the the position of the top-left corner of each image.
+    # (h // img_dim) * img_dim preferred over just h for the situation when h % img_dim produces
     # a non-zero remainder. h - h % img_len is also alternatively used here.
-    grid = product(range(0, (h // img_dim) * img_dim, img_dim), range(0, (w // img_dim) * img_dim, img_dim))
+    grid = product(
+        range(0, (h // img_dim) * img_dim, img_dim),
+        range(0, (w // img_dim) * img_dim, img_dim),
+    )
     for i, j in grid:
         box = (j, i, j + img_dim, i + img_dim)
         out = os.path.join(dir_out, f"{filename_list[k]}.jpg")

@@ -32,7 +32,9 @@ def index(request):
 
     return HttpResponse(template.render(context, request))
 
+
 # add pagination here
+
 
 @login_required
 def begin(request):
@@ -102,21 +104,21 @@ def selection(request, image_id):
     else:
         return JsonResponse({"error": "Method Not Allowed"}, status=405)
 
+
 def create_new_user(request):
     if request.method == "GET":
         template = loader.get_template("create_new_user.html")
-        context = {
-        }
+        context = {}
 
         return HttpResponse(template.render(context, request))
-    
+
     elif request.method == "POST":
-        username = request.POST.get('username')
+        username = request.POST.get("username")
         if username_exists(username):
             return HttpResponseRedirect(reverse("login"))
 
-        password = request.POST.get('password')
-        
+        password = request.POST.get("password")
+
         hashed_password = make_password(password)
         user = User.objects.create(username=username, password=hashed_password)
 
@@ -133,6 +135,7 @@ def end(request):
     context = {}
 
     return HttpResponse(template.render(context, request))
+
 
 def empty(request):
     template = loader.get_template("captchapractice/empty.html")

@@ -181,5 +181,6 @@ def get_captcha_order(user):
 
     return captcha_quiz_order
 
+
 def username_exists(username):
     return User.objects.filter(username=username).exists()

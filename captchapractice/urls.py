@@ -12,11 +12,9 @@ urlpatterns = [
     path("index/", views.index, name="index"),
     path("begin/", views.begin, name="begin"),
     path("<int:image_id>/", views.selection, name="selection"),
-
-    path("accounts/newuser/", views.create_new_user, name="create new user"), 
+    path("accounts/newuser/", views.create_new_user, name="create new user"),
     path("end/", views.end, name="end"),
     path("empty/", views.empty, name="empty"),
-
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
