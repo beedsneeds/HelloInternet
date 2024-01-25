@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<div id="centre-div">
+<div id="login-contents">
 
     {% if form.errors %}
         <p>Your username and password didn't match. Please try again.</p>
@@ -46,5 +46,20 @@
     {% endif %}
 
 </div>
+
+<!-- <div class="hidden-display"> -->
+    <div id="register-contents">
+        <form method="post" action="{% url 'captchapractice:create new user' %}">
+            {% csrf_token %}
+            <label for="username">Username:</label>
+            <input type="text" name="username" required><br>
+        
+            <label for="password"> Password:</label>
+            <input type="password" name="password"><br>
+        
+            <input type="submit" value="Create User">
+        </form>
+    </div>
+<!-- </div> -->
 
 {% endblock %}
