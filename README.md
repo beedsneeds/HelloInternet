@@ -25,12 +25,12 @@ If the system is uncertain if the user is human, it presents additional verifica
 ##### 1. Uploading Captcha
 Superusers and admins, using Django's admin interface, can contribute images for captchas. The admin site, being modular, has been altered structurally and functionally: using Django's signal dispatcher, the image is automatically validated upon captcha creation, after which a number related models (the *ImageSlice* model representing a single image of the Captcha grid) are created. The manual, and perhaps tedious, part of this process is selecting which images in the grid display the object the Captcha requires you to select. In the future, I'd like for some type of computer vision to solve this.
 
-##### 2. Users
-Users can sign up with a unique username. Django's password validation is disabled to simplify account creation, considering users may attempt the captcha multiple times. Responses are saved to ensure users view a particular captcha only once across all 'captcha challenges'.
+##### 2. Captcha
+The user is presented with a series of increasingly complex captchas. Successive captchas are loaded asynchronously with Vanilla JS through DOM manipulation. User responses are saved to ensure no user is served with the same captcha again. Users can sign up with a unique username. Django's password validation is disabled to simplify account creation, considering users may attempt the captcha multiple times.
 
 
 ### Future Work:
 1. Automatically identify objects and provide admins the option to choose which object within the image should the captcha evaluate for. This is a long-term goal that I'll constantly be moving towards.
 2. At this moment, only a single *type* of captcha has been implemented. I have two more captcha-types in the pipeline. 
 3. Provide the option for users to report if a captcha has not been evaluated properly. When paired with #1, it should help aggregate public feedback on how much of this captcha creation process can be automated.
-4. Speed: I've incorporated asynchronous Javascript to smooth out the experience. However, in production, image load times are slow and server response times are noticeably much slower. I want to explore switching to a geographically closer compute instance (EC2 in Mumbai, compared to the current US-based Heroku). Additionally, its worth seeing if a CDN [in front of](https://whitenoise.readthedocs.io/en/stable/#isn-t-serving-static-files-from-python-horribly-inefficient) WhiteNoise will further enhance performance. 
+4. Speed: I've incorporated asynchronous Javascript to smooth out the experience. However, in production, image load times are slow and server response times are noticeably much slower. I want to explore switching to a single-page application implementation and to a geographically closer compute instance (EC2 in Mumbai, compared to the current US-based Heroku). Additionally, its worth seeing if a CDN [in front of](https://whitenoise.readthedocs.io/en/stable/#isn-t-serving-static-files-from-python-horribly-inefficient) WhiteNoise will further enhance performance. 
