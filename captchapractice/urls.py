@@ -13,7 +13,8 @@ urlpatterns = [
     path("begin/", views.begin, name="begin"),
     path("<int:image_id>/", views.selection, name="selection"),
 
-    path("accounts/newuser/", views.create_new_user, name="create new user"), 
+    path("login/", views.login_view, name="login"), 
+    path("logout/", views.logout_view, name="logout"), 
     path("end/", views.end, name="end"),
     path("empty/", views.empty, name="empty"),
 

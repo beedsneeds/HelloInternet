@@ -20,7 +20,7 @@
 {% else %}
 <p>
     Please
-    <a href="{% url 'login' %}?next={{ request.path }}" class="line2">log in</a>
+    <a href="{% url 'captchapractice:login' %}?next={{ request.path }}" class="line2">log in</a>
     to continue. We keep a track of your responses to not give you the same prompts in successive games.
 </p>
 

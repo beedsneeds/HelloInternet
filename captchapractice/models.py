@@ -2,8 +2,6 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-from django.forms import ModelForm
-
 from random import sample
 
 
@@ -101,12 +99,6 @@ class ImageSlice(models.Model):
 
     class Meta:
         ordering = ["slice_name"]
-
-
-class ImageSliceForm(ModelForm):
-    class Meta:
-        model = ImageSlice
-        fields = ["element_presence"]
 
 
 class Game(models.Model):

@@ -4,11 +4,13 @@ from django.urls import reverse
 from django.template import loader, RequestContext
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user, login
+from django.contrib.auth import get_user, login, logout, authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
+
 from .models import CaptchaImage, UserResponses, get_captcha_order, username_exists
+from .forms import UserCreationForm, LoginForm
 
 import json
 
@@ -102,29 +104,52 @@ def selection(request, image_id):
     else:
         return JsonResponse({"error": "Method Not Allowed"}, status=405)
 
-def create_new_user(request):
+def login_view(request):
+    template = loader.get_template("captchapractice/login.html")
+
     if request.method == "GET":
-        template = loader.get_template("create_new_user.html")
+        form = LoginForm()
+        # rename to loginForm so you can incorp even sign up form
+        # remeber to change form handling logic in .html
         context = {
+            'form': form,
         }
 
         return HttpResponse(template.render(context, request))
     
     elif request.method == "POST":
-        username = request.POST.get('username')
-        if username_exists(username):
-            return HttpResponseRedirect(reverse("login"))
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            usermame = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=usermame, password=password)
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(reverse("captchapractice:home"))
+            else:
+                pass
+                # handle the logic of 'username & password does not match' and (optional) 'username doesn't exist'
 
-        password = request.POST.get('password')
+
+    # elif request.method == "POST":
+    #     username = request.POST.get('username')
+    #     if username_exists(username):
+    #         return HttpResponseRedirect(reverse("login"))
+
+    #     password = request.POST.get('password')
         
-        hashed_password = make_password(password)
-        user = User.objects.create(username=username, password=hashed_password)
+    #     hashed_password = make_password(password)
+    #     user = User.objects.create(username=username, password=hashed_password)
 
-        login(request, user)
+    #     login(request, user)
 
-        # Redirect to a success page or any other appropriate action
-        return HttpResponseRedirect(reverse("captchapractice:home"))
+    #     # Redirect to a success page or any other appropriate action
+    #     return HttpResponseRedirect(reverse("captchapractice:home"))
 
+
+def logout_view(request):
+    logout(request)
+    return redirect(reverse("captchapractice:home"))
 
 # These two have to be replaced by generic views.
 def end(request):
