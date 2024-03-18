@@ -7,76 +7,74 @@
 
 {% block content %}
 
-<div id="login-contents">
+<div class="login-container">
 
-    {% if form.errors %}
+    <div class="login-contents" id="centre-div">
+        {% if login_form.errors %}
         <p>Your username and password didn't match. Please try again.</p>
-    {% endif %}
+        {% endif %}
 
-    {% if next %}
+        {% if next %}
         {% if user.is_authenticated %}
-            <p>Your account doesn't have access to this page. 
+        <p>Your account doesn't have access to this page.
             To proceed, please login with an account that has access</p>
         {% else %}
-            <p>Please login to see this page.</p>
+        <p>Please login to see this page.</p>
         {% endif %}
-    {% endif %}
+        {% endif %}
 
-
-    {% if user.is_authenticated %}
+        {% if user.is_authenticated %}
         <p class="line2">Logged in as: <strong>{{ user.get_username }}</strong>
-        <a href="{% url 'captchapractice:logout' %}?next={{ request.path }}" class="line2">(Logout)</a></p>    
-    {% else %}
-        <form action="" method="post">
-            {% csrf_token %}
-            <table>
-                <tr>
-                    <td>{{ form.username.label_tag}}</td>
-                    <td>{{ form.username }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form.password.label_tag}}</td>
-                    <td>{{ form.password }}</td>
-                </tr>
-            </table>
-            <input type="submit" value="Log In">
-            <input type="hidden" name="next" value="{{next}}">
-        </form>
-
-    {% endif %}
-
-</div>
-
-<!-- <div class="hidden-display"> -->
-    <!-- <div id="register-contents">
+            <a href="{% url 'captchapractice:logout' %}?next={{ request.path }}" class="line2">(Logout)</a>
+        </p>
+        {% else %}
+        <h4 class="button-link">Log In</h4>
         <form method="post" action="{% url 'captchapractice:login' %}">
             {% csrf_token %}
             <table>
                 <tr>
-                    <td><label for="username">Username:</label></td>
-                    <td><input type="text" name="username" required></td>
+                    <td>{{ login_form.username.label_tag}}</td>
+                    <td>{{ login_form.username }}</td>
                 </tr>
                 <tr>
-                    <td><label for="password"> Password:</label></td>
-                    <td><input type="password" name="password"></td>
+                    <td>{{ login_form.password.label_tag}}</td>
+                    <td>{{ login_form.password }}</td>
+                </tr>
+            </table>
+            <div class="submit-row">
+
+                <input type="submit" value="Log In">
+                <input type="hidden" name="next" value="{{next}}">
+            </div>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="signup-contents" id="centre-div">
+        {% if user.is_authenticated %}
+        {% else %}
+        <h4 class="button-link">Register</h4>
+        <form method="post" action="{% url 'captchapractice:signup' %}">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>{{ signup_form.username.label_tag}}</td>
+                    <td>{{ signup_form.username }}</td>
+                </tr>
+                <tr>
+                    <td>{{ signup_form.password1.label_tag}}</td>
+                    <td>{{ signup_form.password1 }}</td>
+                </tr>
+                <tr>
+                    <td>Repeat Password: </td>
+                    <td>{{ signup_form.password2 }}</td>
                 </tr>
             </table>
             <input type="submit" value="Create User">
+            {% endif %}
+        </form>
+    </div>
 
-
-            <!-- <label for="username">Username:</label>
-            <input type="text" name="username" required><br>
-        
-            <label for="password"> Password:</label>
-            <input type="password" name="password"><br>
-        
-            <input type="submit" value="Create User"> -->
-        <!-- </form> 
-    </div> -->
-<!-- </div> -->
+</div>
 
 {% endblock %}
-
-        <!-- <p>New User? 
-            <a href="{% url 'captchapractice:create new user' %}?next={{ request.path }}" class="line2">Create an account       
-            </a></p> -->

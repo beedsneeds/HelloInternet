@@ -14,7 +14,9 @@ urlpatterns = [
     path("<int:image_id>/", views.selection, name="selection"),
 
     path("login/", views.login_view, name="login"), 
+    path("signup/", views.signup_view, name="signup"), 
     path("logout/", views.logout_view, name="logout"), 
+    
     path("end/", views.end, name="end"),
     path("empty/", views.empty, name="empty"),
 

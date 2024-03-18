@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
 
-from .models import CaptchaImage, UserResponses, get_captcha_order, username_exists
-from .forms import UserCreationForm, LoginForm
+from .models import CaptchaImage, UserResponses, get_captcha_order
+from .forms import SignupForm, LoginForm
 
 import json
 
@@ -31,7 +31,6 @@ def index(request):
     context = {
         "captchalist": captchalist,
     }
-
     return HttpResponse(template.render(context, request))
 
 # add pagination here
@@ -42,11 +41,9 @@ def begin(request):
 
     user = get_user(request)
     captcha_order = get_captcha_order(user)
-
     context = {
         "captcha_order": captcha_order,
     }
-
     return HttpResponse(template.render(context, request))
 
 
@@ -61,7 +58,6 @@ def selection(request, image_id):
             "img_slice_list": img_slice_list,
             "img_object": img_object,
         }
-
         return HttpResponse(template.render(context, request))
 
     elif request.method == "POST":
@@ -103,49 +99,47 @@ def selection(request, image_id):
 
     else:
         return JsonResponse({"error": "Method Not Allowed"}, status=405)
+    
 
 def login_view(request):
     template = loader.get_template("captchapractice/login.html")
 
-    if request.method == "GET":
-        form = LoginForm()
-        # rename to loginForm so you can incorp even sign up form
-        # remeber to change form handling logic in .html
-        context = {
-            'form': form,
-        }
-
-        return HttpResponse(template.render(context, request))
-    
-    elif request.method == "POST":
+    if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            usermame = form.cleaned_data['username']
+            username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            user = authenticate(request, username=usermame, password=password)
+            user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect(reverse("captchapractice:home"))
-            else:
-                pass
+            # else:
+            #     pass
                 # handle the logic of 'username & password does not match' and (optional) 'username doesn't exist'
 
+    login_form = LoginForm()
+    signup_form = SignupForm()
+    # This page houses the signup_form. The post request of the signup_form is directly sent to /signup
+    context = {
+        'login_form': login_form,
+        'signup_form': signup_form,
+    }
+    return HttpResponse(template.render(context, request))
 
-    # elif request.method == "POST":
-    #     username = request.POST.get('username')
-    #     if username_exists(username):
-    #         return HttpResponseRedirect(reverse("login"))
+ 
+def signup_view(request):
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            password1 = form.cleaned_data['password1']
+            user = authenticate(request, username=username, password=password1)
+            if user is not None:
+                login(request, user)
+            return redirect('captchapractice:home')
 
-    #     password = request.POST.get('password')
-        
-    #     hashed_password = make_password(password)
-    #     user = User.objects.create(username=username, password=hashed_password)
-
-    #     login(request, user)
-
-    #     # Redirect to a success page or any other appropriate action
-    #     return HttpResponseRedirect(reverse("captchapractice:home"))
-
+    return redirect('captchapractice:login')
 
 def logout_view(request):
     logout(request)
