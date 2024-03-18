@@ -2,8 +2,6 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-from django.forms import ModelForm
-
 from random import sample
 
 
@@ -103,12 +101,6 @@ class ImageSlice(models.Model):
         ordering = ["slice_name"]
 
 
-class ImageSliceForm(ModelForm):
-    class Meta:
-        model = ImageSlice
-        fields = ["element_presence"]
-
-
 class Game(models.Model):
     # This class doesn't need to exist. The methods could be transplanted somewhere else.
     # It's a placeholder for future functionality
@@ -181,6 +173,5 @@ def get_captcha_order(user):
 
     return captcha_quiz_order
 
-
-def username_exists(username):
-    return User.objects.filter(username=username).exists()
+# def username_exists(username):
+#     return User.objects.filter(username=username).exists()

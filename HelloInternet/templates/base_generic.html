@@ -21,7 +21,7 @@
 
         <section class="parallax" id="section1">
             <h2>Captcha Practice</h2>
-            <p>"If Google's recaptcha is often challenge for you, you might have a better experience here."</p>
+            <p>If Google's recaptcha is often challenge for you, you might have a better experience here.</p>
         </section>
 
         <div class="l-r-container">
@@ -33,7 +33,7 @@
                     <li><a href="{% url 'captchapractice:index' %}" class="button-link">Index Page</a></li>
                     <li><a href="{% url 'captchapractice:begin' %}" class="button-link">Begin (Challenge Yourself)</a>
                     </li>
-                    <li><a href="{% url 'login' %}" class="button-link">Log in</a></li>
+                    <li><a href="{% url 'captchapractice:login' %}" class="button-link">Log in</a></li>
                 </ul>
             </div>
 
@@ -41,11 +41,11 @@
                 <div class="login-div">
                     {% if user.is_authenticated %}
                     <p class="login-text">Logged in as: <strong>{{ user.get_username }}</strong>
-                        <a href="{% url 'logout' %}?next={{ request.path }}" class="login-text">(Logout)</a>
+                        <a href="{% url 'captchapractice:logout' %}?next={{ request.path }}" class="login-text">(Logout)</a>
                     </p>
                     {% comment %}
                     {% else %}
-                    <a href="{% url 'login' %}?next={{ request.path }}" class="login-text">Login</a>
+                    <a href="{% url 'captchapractice:login' %}?next={{ request.path }}" class="login-text">Login</a>
                     {% endcomment %}
                     {% endif %}
                 </div>

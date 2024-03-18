@@ -87,24 +87,31 @@ body {
 .left-section {
     box-shadow: 1px 6px 8px rgba(0, 0, 0, 0.1);
 }
-
-
-
 .left-section {
     flex: 1;
     padding: 20px;
     background-color: #f0f0f0;
     /* background-color: #EFF0EB; */
 }
-
-
-
 .right-section {
     flex: 4;
     padding: 10px;
     background-color: #f5f5f5;
 }
 
+.login-container {
+    display: flex;
+    flex-direction: row;
+    min-height: 67vh;
+
+}
+.login-contents{
+    flex: 1;
+}
+.signup-contents{
+    flex: 1;
+    border-left: 0.7px solid #434343;
+}
 
 /* sidebar & links */
 
@@ -165,7 +172,7 @@ li {
 
 
 
-/* found in begin.html */
+/* found in begin.html & login.html*/
 #centre-div {
     display: flex;
     flex-direction: column;

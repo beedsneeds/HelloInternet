@@ -1,0 +1,80 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+
+
+
+
+{% block content %}
+
+<div class="login-container">
+
+    <div class="login-contents" id="centre-div">
+        {% if login_form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+        {% endif %}
+
+        {% if next %}
+        {% if user.is_authenticated %}
+        <p>Your account doesn't have access to this page.
+            To proceed, please login with an account that has access</p>
+        {% else %}
+        <p>Please login to see this page.</p>
+        {% endif %}
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <p class="line2">Logged in as: <strong>{{ user.get_username }}</strong>
+            <a href="{% url 'captchapractice:logout' %}?next={{ request.path }}" class="line2">(Logout)</a>
+        </p>
+        {% else %}
+        <h4 class="button-link">Log In</h4>
+        <form method="post" action="{% url 'captchapractice:login' %}">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>{{ login_form.username.label_tag}}</td>
+                    <td>{{ login_form.username }}</td>
+                </tr>
+                <tr>
+                    <td>{{ login_form.password.label_tag}}</td>
+                    <td>{{ login_form.password }}</td>
+                </tr>
+            </table>
+            <div class="submit-row">
+
+                <input type="submit" value="Log In">
+                <input type="hidden" name="next" value="{{next}}">
+            </div>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="signup-contents" id="centre-div">
+        {% if user.is_authenticated %}
+        {% else %}
+        <h4 class="button-link">Register</h4>
+        <form method="post" action="{% url 'captchapractice:signup' %}">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>{{ signup_form.username.label_tag}}</td>
+                    <td>{{ signup_form.username }}</td>
+                </tr>
+                <tr>
+                    <td>{{ signup_form.password1.label_tag}}</td>
+                    <td>{{ signup_form.password1 }}</td>
+                </tr>
+                <tr>
+                    <td>Repeat Password: </td>
+                    <td>{{ signup_form.password2 }}</td>
+                </tr>
+            </table>
+            <input type="submit" value="Create User">
+            {% endif %}
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}
