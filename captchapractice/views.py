@@ -33,7 +33,9 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+
 # add pagination here
+
 
 @login_required
 def begin(request):
@@ -99,7 +101,7 @@ def selection(request, image_id):
 
     else:
         return JsonResponse({"error": "Method Not Allowed"}, status=405)
-    
+
 
 def login_view(request):
     template = loader.get_template("captchapractice/login.html")
@@ -152,6 +154,7 @@ def end(request):
     context = {}
 
     return HttpResponse(template.render(context, request))
+
 
 def empty(request):
     template = loader.get_template("captchapractice/empty.html")
