@@ -3,6 +3,9 @@
 import os
 import sys
 
+# For Render's port binding to `10000`
+from django.core.management.commands.runserver import Command as runserver
+runserver.default_port = "10000"
 
 def main():
     """Run administrative tasks."""
