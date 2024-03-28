@@ -1,10 +1,10 @@
-The site resides at [heroku](https://hello-internet-c2d83d7d2d7e.herokuapp.com/captchapractice/). It might take a second to wake up.
+The site resides at [render](https://hellointernet.onrender.com/captchapractice/). It will take upto 30 seconds to wake up since Render spins down any of its websites that goes 15 minutes without receiving inbound traffic.
 
 ### Project Purpose
 
 The objective of this project is *not* to create an exact replica of Google's reCaptcha due to its extensive scope. Instead, my aim is to simulate the user experience encountered when solving various "Are you human?" challenges commonly found on the internet.
 
-As of January 2024, this project is still a work in progress and does not represent the final envisioned product. Nevertheless, it serves as a demonstration of my learning, and the project's complexity will evolve as my overall experience grows.
+As of March 2024, this project is still a work in progress and does not represent the final envisioned product. Nevertheless, it serves as a demonstration of my learning, and the project's complexity will evolve as my overall experience grows.
 
 
 ### Background
@@ -33,4 +33,4 @@ The user is presented with a series of increasingly complex captchas. Successive
 1. Automatically identify objects and provide admins the option to choose which object within the image should the captcha evaluate for. This is a long-term goal that I'll constantly be moving towards.
 2. At this moment, only a single *type* of captcha has been implemented. I have two more captcha-types in the pipeline. 
 3. Provide the option for users to report if a captcha has not been evaluated properly. When paired with #1, it should help aggregate public feedback on how much of this captcha creation process can be automated.
-4. Speed: I've incorporated asynchronous Javascript to smooth out the experience. However, in production, image load times are slow and server response times are noticeably much slower. I want to explore switching to a single-page application implementation and to a geographically closer compute instance (EC2 in Mumbai, compared to the current US-based Heroku). Additionally, its worth seeing if a CDN [in front of](https://whitenoise.readthedocs.io/en/stable/#isn-t-serving-static-files-from-python-horribly-inefficient) WhiteNoise will further enhance performance. 
+4. [Done 3/24] Speed: I've incorporated asynchronous Javascript to smooth out the experience. However, in production, image load times are slow and server response times are noticeably much slower. I want to explore switching to a geographically closer compute instance (like EC2 in Mumbai, compared to the current US-based Heroku). Additionally, its worth seeing if a CDN [in front of](https://whitenoise.readthedocs.io/en/stable/#isn-t-serving-static-files-from-python-horribly-inefficient) WhiteNoise will further enhance performance. 
