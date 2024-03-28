@@ -35,6 +35,27 @@ from random import sample
 
 
 class CaptchaImage(models.Model):
+
+    """page 1: 
+    upload image  
+    image name
+        - run img validation 
+        - run yolo8
+
+    page 2:
+        - object selection options
+        - yolo8 output
+    prompt text (auto generate if possible)
+    slice count
+    difficulty rating
+        - compute element presence
+
+    page 3:
+
+     - slice images + element presence
+     - link to the finished prompt
+    """
+
     image = models.ImageField(
         upload_to="admin uploads/", null=True
     )  # MEDIA_ROOT/admin uploads/

@@ -19,6 +19,9 @@ urlpatterns = [
  
     path("end/", views.end, name="end"),
     path("empty/", views.empty, name="empty"),
+    
+    path("new/", views.new_captcha, name="new"),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

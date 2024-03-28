@@ -5,7 +5,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 
-from .models import ImageSlice
+from .models import CaptchaImage, ImageSlice
+
+class CaptchaImageForm(forms.ModelForm):
+    class Meta:
+        model = CaptchaImage
 
 
 class ImageSliceForm(forms.ModelForm):

@@ -162,3 +162,10 @@ def empty(request):
     context = {}
 
     return HttpResponse(template.render(context, request))
+
+
+def new_captcha(request):
+    template = loader.get_template("captchapractice/captcha_new1.html")
+    context = {}
+
+    return HttpResponse(template.render(context, request))
