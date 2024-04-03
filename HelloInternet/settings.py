@@ -107,7 +107,6 @@ if "DATABASE_URL" in os.environ:
 
 # Password validation - turning this off because its overkill for this app
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
 # AUTH_PASSWORD_VALIDATORS = [
 #     {
 #         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",

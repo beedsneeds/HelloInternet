@@ -5,7 +5,9 @@ from django.contrib.auth.models import User
 from random import sample
 
 
-# Create your models here.
+# delete when porting to new DB
+# game moidel & image field of captchaimage & rename element presense to object presence
+
 
 """
     Configured a 'post-save' signal:
@@ -35,40 +37,22 @@ from random import sample
 
 
 class CaptchaImage(models.Model):
-
-    """page 1: 
-    upload image  
-    image name
-        - run img validation 
-        - run yolo8
-
-    page 2:
-        - object selection options
-        - yolo8 output
-    prompt text (auto generate if possible)
-    slice count
-    difficulty rating
-        - compute element presence
-
-    page 3:
-
-     - slice images + element presence
-     - link to the finished prompt
-    """
-
     image = models.ImageField(
-        upload_to="admin uploads/", null=True
+        upload_to="admin uploads/",
+        null=True,
+        help_text="Only accepts images with 1:1 dimensions",
     )  # MEDIA_ROOT/admin uploads/
+    # can be deleted entirely
     image_name = models.CharField(
         max_length=10,
         unique=True,
-        help_text="Enter an abbreviated image name (max length 10 characters). Do not include an extension",
     )
     prompt_text = models.CharField(
         max_length=200,
         help_text='The prompt the user sees. Eg: "Select all the cars in the image" ',
     )
 
+    # If these dicitionaries change, change the same in forms. Duplication of code explained there
     SLICE_CHOICES = [
         (3, "3x3 Grid"),
         (4, "4x4 Grid"),
@@ -104,9 +88,7 @@ class CaptchaImage(models.Model):
 
     # class Meta:
     #     ordering = ['-difficulty_level']
-
-
-# using order_by query instead from within views
+    # using order_by query instead from within views
 
 
 class ImageSlice(models.Model):
@@ -133,9 +115,8 @@ class UserResponses(models.Model):
     root_image = models.ForeignKey(
         CaptchaImage, on_delete=models.SET_NULL, null=True, blank=True
     )
-    # response_json = models.JSONField(null=True)
     response_json = models.TextField(null=True, max_length=800)
-    # max length dependant on how large the image grid is + length of imageslice names
+    # Max length dependent on how large the image grid is + length of imageslice suffixes
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     # percieved_inaccuracy = models.BooleanField(default=False)
 
@@ -143,7 +124,7 @@ class UserResponses(models.Model):
         selected = set(selected_choices)
         correct = set(correct_choices)
 
-        # Members that are 'correct' in the traditional sense (they occur in both sets // set intersection)
+        # Members that are 'correct' in the traditional sense (they occur in both sets) i.e. set intersection
         true_positives = correct & selected
         # Members that were wrong. That is, those that were not 'correct' but were selected nonetheless
         false_postives = selected - correct
@@ -161,7 +142,7 @@ class UserResponses(models.Model):
         return (evaluation, true_positives, false_postives, false_negatives)
 
 
-# this is a class-less method because I don't know what I want to persisently store in 'Game' model
+# This is a class-less method
 def get_captcha_order(user):
     solved_history = set(
         UserResponses.objects.filter(user=user).values_list("root_image", flat=True)
@@ -171,7 +152,8 @@ def get_captcha_order(user):
     # For testing the bottom line is picked. For production, use the top line
 
     # It creates a randomized list of captcha primary keys. Total length of quiz is 4:
-    # The first will always be easy difficulty. 2nd medium. 3rd & 4th will be hard (because hard ones are interesting)
+    # The first will always be easy difficulty. 2nd medium.
+    # 3rd & 4th will be hard (because hard ones are interesting
     captcha_quiz_order = []
     for i in range(1, 4):
         filtered_by_difficulty = list(
@@ -193,6 +175,3 @@ def get_captcha_order(user):
             captcha_quiz_order.append(sample(filtered_by_difficulty, 1).pop())
 
     return captcha_quiz_order
-
-# def username_exists(username):
-#     return User.objects.filter(username=username).exists()

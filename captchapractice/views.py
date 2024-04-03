@@ -10,9 +10,25 @@ from django.contrib.auth.hashers import make_password
 
 
 from .models import CaptchaImage, UserResponses, get_captcha_order
-from .forms import SignupForm, LoginForm
+from .forms import SignupForm, LoginForm, NewCaptchaForm_Upload, NewCaptchaForm_Details
+
+# from ..captchapractice import utils
+from .utils import validate_image_dimensions, run_object_detection, make_image_slices
 
 import json
+
+
+# These two have to be replaced by generic views.
+def end(request):
+    template = loader.get_template("captchapractice/end.html")
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+def empty(request):
+    template = loader.get_template("captchapractice/empty.html")
+    context = {}
+    return HttpResponse(template.render(context, request))
 
 
 def home(request):
@@ -24,6 +40,7 @@ def home(request):
 
 
 # Rename to image index
+# add pagination here
 def index(request):
     template = loader.get_template("captchapractice/index.html")
 
@@ -32,9 +49,6 @@ def index(request):
         "captchalist": captchalist,
     }
     return HttpResponse(template.render(context, request))
-
-
-# add pagination here
 
 
 @login_required
@@ -109,63 +123,160 @@ def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect(reverse("captchapractice:home"))
             # else:
             #     pass
-                # handle the logic of 'username & password does not match' and (optional) 'username doesn't exist'
+            # handle the logic of 'username & password does not match' and (optional) 'username doesn't exist'
 
     login_form = LoginForm()
     signup_form = SignupForm()
-    # This page houses the signup_form. The post request of the signup_form is directly sent to /signup
+    # This page houses the signup_form as well. The post request of the signup_form is directly sent to /signup
     context = {
-        'login_form': login_form,
-        'signup_form': signup_form,
+        "login_form": login_form,
+        "signup_form": signup_form,
     }
     return HttpResponse(template.render(context, request))
 
- 
+
 def signup_view(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data['username']
-            password1 = form.cleaned_data['password1']
+            username = form.cleaned_data["username"]
+            password1 = form.cleaned_data["password1"]
             user = authenticate(request, username=username, password=password1)
             if user is not None:
                 login(request, user)
-            return redirect('captchapractice:home')
+            return redirect("captchapractice:home")
 
-    return redirect('captchapractice:login')
+    return redirect("captchapractice:login")
+
 
 def logout_view(request):
     logout(request)
     return redirect(reverse("captchapractice:home"))
 
-# These two have to be replaced by generic views.
-def end(request):
-    template = loader.get_template("captchapractice/end.html")
 
-    context = {}
+"""
+Process 
 
-    return HttpResponse(template.render(context, request))
-
-
-def empty(request):
-    template = loader.get_template("captchapractice/empty.html")
-
-    context = {}
-
-    return HttpResponse(template.render(context, request))
+page 3:
+    - slice images + element presence
+    - link to the finished prompt
+"""
 
 
 def new_captcha(request):
-    template = loader.get_template("captchapractice/captcha_new1.html")
-    context = {}
+    """
+    Page 1 (of 3) of Captcha creation:
+    - GET:
+        upload imagefile
+        image name
+    - POST:
+        handle form
+        run img validation
+        run yolo8
+    """
+
+    if request.method == "POST":
+        upload_form = NewCaptchaForm_Upload(request.POST, request.FILES)
+
+        if upload_form.is_valid():
+            filename = upload_form.cleaned_data["filename"]
+            result = validate_image_dimensions(
+                image=request.FILES["image"], filename=filename
+            )
+            if result is True:
+                detected_coords, detected_classes = run_object_detection(filename)
+
+                request.session["detected_classes"] = detected_classes
+                request.session["detected_coords"] = detected_coords
+                request.session["filename"] = filename
+
+                template = loader.get_template(
+                    "captchapractice/new_captcha_details.html"
+                )
+                details_form = NewCaptchaForm_Details(object_list=detected_classes)
+                context = {
+                    "filename": filename,
+                    "details_form": details_form,
+                }
+
+                return HttpResponse(template.render(context, request))
+        else:
+            print(upload_form.errors)
+            print(upload_form.non_field_errors)
+    else:
+        upload_form = NewCaptchaForm_Upload()
+        template = loader.get_template("captchapractice/new_captcha_upload.html")
+        context = {
+            "upload_form": upload_form,
+        }
+
+        return HttpResponse(template.render(context, request))
+
+
+def new_captcha_details(request):
+    """
+    Page 2 (of 3) of Captcha creation:
+    - GET: (continuation of Page 1 POST)
+        Display yolo8 output
+        object selection options (built into prompt text)
+        slice count
+        difficulty rating
+    - POST:
+        handle form
+        create image slices incl. compute element presence
+    """
+
+    detected_classes = request.session.get("detected_classes")
+    detected_coords = request.session.get("detected_coords")
+    filename = request.session.get("filename")
+
+    if request.method == "POST":
+        print("pre-requestPOST")
+        details_form = NewCaptchaForm_Details(
+            request.POST, object_list=detected_classes
+        )
+        if details_form.is_valid():
+            selected_object = details_form.cleaned_data["selected_object"]
+
+            captcha_image = CaptchaImage.objects.create(image_name=filename)
+            captcha_image.prompt_text = f"Select the {selected_object} in the image"
+            captcha_image.slice_count = details_form.cleaned_data["slice_count"]
+            captcha_image.difficulty_level = details_form.cleaned_data[
+                "difficulty_level"
+            ]
+            captcha_image.save()
+            # After the image is saved, a post-save signal is sent to signals.py\
+            # make_image_slices(
+            #     captcha_instance=captcha_image,
+            #     detected_coords=detected_coords,
+            #     selected_object=selected_object,
+            # )
+        else:
+            print(details_form.errors)
+            print(details_form.non_field_errors)
+
+    # will not be reachable when not testing individual pages
+    template = loader.get_template("captchapractice/new_captcha_details.html")
+    detected_classes = {
+        ("potato", "potato"),
+    }
+    details_form = NewCaptchaForm_Details(object_list=detected_classes)
+    context = {
+        "filename": "shikamaru",
+        "details_form": details_form,
+    }
 
     return HttpResponse(template.render(context, request))
+
+
+def new_captcha_review(request):
+    pass

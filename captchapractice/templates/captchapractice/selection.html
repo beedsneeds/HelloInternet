@@ -17,7 +17,7 @@
 
         <form id="response-form">
             {% csrf_token %}
-
+            
             <div class="image-grid" style="--slice-count: {{ img_object.slice_count }};">
                 {% for slice in img_slice_list %}
                 <div class="image">

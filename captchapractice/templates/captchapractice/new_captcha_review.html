@@ -1,0 +1,39 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block content %}
+
+<div id="centre-div">
+
+
+    <form enctype="multipart/form-data" method="post" action="{% url 'captchapractice:new' %}">
+        {% csrf_token %}
+
+        <table>
+            <tr>
+                <th>{{ upload_form.image.label_tag}}</th>
+                <td>{{ upload_form.image }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-bottom: 15px;">
+                    <em class="muted-text">{{ upload_form.image.help_text }}</em></td>
+            </tr>
+            <tr>
+                <th>{{ upload_form.filename.label_tag}}</th>
+                <td>{{ upload_form.filename }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-bottom: 15px;">
+                    <em class="muted-text">{{ upload_form.filename.help_text }}</em></td>
+            </tr>
+        </table>
+
+        <input type="submit" value="Next">
+        <p> If its wrong, step into the admin interface to change it</p>
+
+    </form>
+
+
+</div>
+
+{% endblock content %}

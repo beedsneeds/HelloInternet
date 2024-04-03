@@ -1,0 +1,81 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block content %}
+
+<div id="centre-div">
+
+    <p> page two.</p>
+    <div class="image-grid">
+        <img class="base-image" src="{% static 'captchapractice/images/prompt candidates/' %}{{ filename }}_yolo.jpg"
+            alt="{{ filename }}_yolo.jpg">
+    </div>
+
+    <form method="post" action="{% url 'captchapractice:newtwo' %}">
+        {% csrf_token %}
+
+        <table>
+            <tr>
+                <td colspan="2" style="padding-bottom: 15px;">
+                    <em class="muted-text"></em>
+                </td>
+            </tr>
+            <tr>
+                <th>The prompt will read:</th>
+                <td> Select the {{ details_form.selected_object }} in the image.</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-bottom: 15px;">
+                    <em class="muted-text"></em>
+                </td>
+            </tr>
+            <tr>
+                <th>The image will be split into a: </th>
+                <td> {{ details_form.slice_count }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-bottom: 15px;">
+                    <em class="muted-text">{{ details_form.slice_count.help_text }}</em>
+                </td>
+            </tr>
+            <tr>
+                <th>{{ details_form.difficulty_level.label_tag}}</th>
+                <td>{{ details_form.difficulty_level }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-bottom: 15px;">
+                    <em class="muted-text">{{ details_form.difficulty_level.help_text }}</em>
+                </td>
+            </tr>
+        </table>
+
+        <input type="submit" value="Next">
+    </form>
+
+
+</div>
+
+{% endblock content %}
+
+{% comment %}
+
+{{ details_form.as_p }}
+
+
+<tr>
+    <td colspan="2" style="padding-bottom: 15px;">
+        <em class="muted-text"></em>
+    </td>
+</tr>
+<tr>
+    <th>{{ details_form.image_name.label_tag}}</th>
+    <td>{{ details_form.image_name }}</td>
+</tr>
+
+
+<tr>
+    <th>The prompt will read:</th>
+    <td> Select the {{ details_form.selected_object }} in the image.</td>
+</tr>
+
+{% endcomment %}

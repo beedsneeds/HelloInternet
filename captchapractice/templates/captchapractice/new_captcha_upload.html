@@ -1,0 +1,53 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block content %}
+
+<div id="centre-div">
+
+    {% if upload_form.errors %}
+    <p>The image does not have 1:1 dimensions. Please try again.</p>
+    <div style="color: red;">{{ error }}</div>
+
+    {% endif %}
+
+    <form enctype="multipart/form-data" method="post" action="{% url 'captchapractice:new' %}">
+        {% csrf_token %}
+
+        <table>
+            <tr>
+                <th>{{ upload_form.image.label_tag}}</th>
+                <td>{{ upload_form.image }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-bottom: 15px;">
+                    <em class="muted-text">{{ upload_form.image.help_text }}</em>
+                </td>
+            </tr>
+            <tr>
+                <th>{{ upload_form.filename.label_tag}}</th>
+                <td>{{ upload_form.filename }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-bottom: 15px;">
+                    <em class="muted-text">{{ upload_form.filename.help_text }}</em>
+                </td>
+            </tr>
+        </table>
+
+        <input type="submit" value="Next">
+        <p> It'll take a while after htting Submit button</p>
+
+    </form>
+
+
+</div>
+
+{% endblock content %}
+
+
+
+{% comment %}
+
+
+{% endcomment %}
