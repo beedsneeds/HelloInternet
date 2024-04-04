@@ -15,7 +15,7 @@ import os
 def create_image_slices(sender, instance, created, **kwargs):
 
     if created:
-        print("we're reaching create img slices")
+        print("post save signal received")
         # filename = instance.image_name
         # slice_count = instance.slice_count
         # make_image_slices(filename, slice_count, ip_image_path, slice_out_path, instance)

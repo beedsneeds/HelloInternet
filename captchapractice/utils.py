@@ -14,8 +14,7 @@ from .models import ImageSlice, CaptchaImage
 
 def validate_image_dimensions(image, filename):
     """
-    Used in views
-    If image dimensions are 1:1, saves the image in path 'out_path' after a bit of processing
+    If image dimensions are 1:1, saves the image in 'out_path' after some processing
     """
     out_path = os.path.join(
         settings.BASE_DIR,
@@ -32,17 +31,14 @@ def validate_image_dimensions(image, filename):
         print("Not a 1:1 ratio image", w, "x", h)
         return False
 
-    # Resize the image so we produce a standardized display
+    # Resize the image to produce a standardized display
     pre_img = pre_img.resize((1200, 1200))
 
-    # An error is thrown if the image is transparent because JPG does not support alpha (transparency) modes like RGBA & P
-    # This is only a stop-gap solution to make image uploading process be more dynamic. I want to be able to use gifs
+    # JPG format doesn't support alpha channels (RGBA & P), avoids errors with transparent images
     if pre_img.mode in ("RGBA", "P"):
         pre_img = pre_img.convert("RGB")
 
-    # The above two lines and the explicit .jpg save converts the image to .jpg
-    # I wonder if there are any file formats that break this
-    # If I didn't use the .jpg extension would gifs remain functional - no because gifs are many frames
+    # Conversion to .jpg accomplished by converting to RGB channel & using the .jpg extension
     out = os.path.join(out_path, f"{filename}.jpg")
     pre_img.save(out)
     return True
@@ -50,14 +46,13 @@ def validate_image_dimensions(image, filename):
 
 def run_object_detection(filename):
     """
-    Used in views
     Uses the YOLOv8 large segmentation model and saves the output in the same path.
     Returns 2 objects:
       1) 2-item list of classes (objects) identified
-      2) xy coordinates of each point in the mask. This is in the form of:
-          list( list_for_each_object( name_of_class , list_of_coord(2-item lists) ) )
+      2) xy coordinates of each point in the mask. This is a 4D list in the form of:
+          list( list_for_each_object_detected( name_of_object , list_of_coord(2-item lists) ) )
     The size of xy coords (the 2-item lists) is massive. So for visualization, use this:
-    xy_mask = [
+    detected_coords = [
             ["person", [ [330.0, 397.0], [328.0, 399.0], [1067.0, 311.0], ]  ],
             ["monkey", [ [330.0, 397.0], [328.0, 399.0], [1067.0, 311.0], ]  ]
         ]
@@ -79,27 +74,26 @@ def run_object_detection(filename):
     output[0].save(filename=out_path)
     output_cls = output[0].boxes.cls
     output_xy = output[0].masks.xy
-    output_coords = []
-    output_classes = set()
+    detected_coords = []
+    detected_classes = set()
 
     for i, cls in enumerate(output_cls):
         cls = int(cls)
         if cls in model.names:
-            output_coords.append([model.names[cls], output_xy[i].round().tolist()])
-            output_classes.add((model.names[cls], model.names[cls]))
+            detected_coords.append([model.names[cls], output_xy[i].round().tolist()])
+            detected_classes.add((model.names[cls], model.names[cls]))
 
-    # List conversion avoids "Object of type set is not JSON serializable"
-    output_classes = list(output_classes)
-    return output_coords, output_classes
-
-
-# rather than use signals, I think its time to just call it directly from views. Its more transparent
+    # List conversion avoids "Set objects are not JSON serializable" errors
+    return detected_coords, list(detected_classes)
 
 
 def make_image_slices(
     captcha_instance: Optional[CaptchaImage], detected_coords, selected_object
 ):
-    coords_list = get_selected_coords(coords=detected_coords, selected=selected_object)
+    """
+    Handles the entire logic of creating and initializing img slices.
+    There's a lot to unpack here, so check each code block.
+    """
 
     path = os.path.join(
         settings.BASE_DIR,
@@ -108,79 +102,73 @@ def make_image_slices(
         "captchapractice",
         "images",
     )
-    # out-path - where the individual image slices are saved
+    # out_path: path where the image slices are saved
     out_path = os.path.join(path, "prompts")
-
-    # in_path - location of processed image after validate_image_dimensions was run
+    # in_path: path of validate_image_dimensions image output
     in_path = os.path.join(path, "prompt candidates")
-    filename = f"{captcha_instance.image_name}.jpg"
-    img = Image.open(os.path.join(in_path, filename))
-
-    w, h = img.size
-
-    # Divides the image into slice_count rows & columns
+    filename = captcha_instance.image_name
     slice_count = int(captcha_instance.slice_count)
-    img_dim = w // slice_count
 
-    # Builds a list containing names of each of the slices
-    # Check if there's a concise way like using list comprehension
-    filename_list = []
-    no_of_slice_objects = (slice_count) ** 2
-    for k in range(1, no_of_slice_objects + 1):
-        if k <= 9:
-            filename_list.append(f"{filename}_0{k}")
-        else:
-            filename_list.append(f"{filename}_{k}")
-        print(filename_list[k - 1])
+    img = Image.open(os.path.join(in_path, f"{filename}.jpg"))
+    w, h = img.size
+    sl_dim = w // slice_count  # sl_dim is the side length of an image slice
 
-    # List 'grid' determines the position of the top-left corner of each image.
-    # ((h // img_dim) * img_dim) preferred over just h for the situation when h % img_dim produces
-    # a non-zero remainder (you get a sliver of row/column because of rounding issues)
-    # (h - h % img_len) is also alternatively used here, but is not as intuitive to understand
+    # Builds a list containing names/labels of each slice
+    filename_list = [
+        f"{filename}_0{k}" if k <= 9 else f"{filename}_{k}"
+        for k in range(1, (slice_count) ** 2 + 1)
+    ]
+    print(filename_list)
+
+    # 1. Filter & flatten the 4D list to a 2D list. Split into 2 lines for readability.
+    #       See run_object_detection to understand how detected_coords is structured.
+    # 2. Flattened to 2D because eval_elem_presence returns True if even one object is present
+    temp_coords = [obj[1] for obj in detected_coords if obj[0] == selected_object]
+    mask_coords = [xy_point for points_list in temp_coords for xy_point in points_list]
+
+    # 1. 'grid' records the coordinates of the top-left vertex of each slice.
+    # 2. ((h // sl_dim) * sl_dim) or (h - h % img_len) is picked over (h) as the former accounts
+    #       for non-zero remainders produced by (h % sl_dim)
     grid = product(
-        range(0, ((h // img_dim) * img_dim), img_dim),
-        range(0, ((w // img_dim) * img_dim), img_dim),
+        range(0, ((h // sl_dim) * sl_dim), sl_dim),
+        range(0, ((w // sl_dim) * sl_dim), sl_dim),
     )
-    k = 0
-    for i, j in grid:
-        # Slice_vertices is a 4-tuple in the form xyxy aka (x1, y1, x2, y2) where
-        #   (x1, y1) is the top-left corner & (x2, y2) is the bottom-right corner.
-        # Used by PIL's Image.crop() and YOLO's boxes.xyxy (which we aren't using here)
-        slice_vertices = (j, i, j + img_dim, i + img_dim)
-        out = os.path.join(out_path, f"{filename_list[k]}.jpg")
-        img.crop(slice_vertices).save(out)
-        ImageSlice.objects.create(
-            root_image=captcha_instance, slice_name=filename_list[k]
+
+    for index, (i, j) in enumerate(grid):
+        # slice_vertices: xyxy format where top-left vertex:(x1, y1), bottom-right vertex: (x2, y2)
+        slice_vertices = (j, i, j + sl_dim, i + sl_dim)
+        element_presence = eval_elem_presence(
+            slice_vertices=slice_vertices,
+            mask_coords=mask_coords,
         )
-        k += 1
+        img.crop(slice_vertices).save(
+            os.path.join(out_path, f"{filename_list[index]}.jpg")
+        )
+        ImageSlice.objects.create(
+            root_image=captcha_instance,
+            slice_name=filename_list[index],
+            element_presence=element_presence,
+        )
 
 
-def get_selected_coords(selected, coords):
-    # xy_mask = [
-    #         ["person", [ [330.0, 397.0], [328.0, 399.0], [1067.0, 311.0], ]  ],
-    #         ["monkey", [ [330.0, 397.0], [328.0, 399.0], [1067.0, 311.0], ]  ]
-    #     ]
-    res = []
-    for item in coords:
-        if item[0] == selected:
-            res.append(item[1])
+def eval_elem_presence(slice_vertices, mask_coords):
+    """
+    Input:
+    slice_vertices = (0, 0, 400, 400)
+    mask_coords = [ [330.0, 397.0], [328.0, 399.0], [1067.0, 311.0],.... ]
 
-    return res
+    Output:
+    Return True only if atleast {sensitivity_count} points lie within a given square slice.
+    {sensitivity_count} serves to avoid false positives for indiscernible overlaps
+    """
 
-
-# test: If slice isn't a 4 elem array of ints and if mask isn't a 2 elem list of lists, fail the test
-# the mask list is not a mirror copy of slice like in box_overlap. Its a very long list of 2-elem lists
-def mask_overlap(slice, mask):
-    # Used in utils
     sensitivity_count = 5
-    # func will return true only if atleast 5 points lie within a given slice
-    # this is an arbitrary number but helps avoid false positives for very tiny areas present in a slice
-
-    for point in mask:
-        if slice[0] <= point[0] <= slice[2]:  # checking x coordinate
-            if slice[1] <= point[1] <= slice[3]:  # checking y coordinate
+    for point in mask_coords:
+        # check x-coord overlap
+        if slice_vertices[0] <= point[0] <= slice_vertices[2]:  
+            # check y-coord overlap
+            if (slice_vertices[1] <= point[1] <= slice_vertices[3]):  
                 sensitivity_count -= 1
         if sensitivity_count == 0:
             return 1
-
     return 0

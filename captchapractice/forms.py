@@ -1,12 +1,6 @@
-# from typing import Any, Mapping
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-
-# from django.core.files.base import File
-# from django.db.models.base import Model
-# from django.forms.utils import ErrorList
-
 
 from .models import ImageSlice
 
@@ -52,13 +46,13 @@ class NewCaptchaForm_Details(forms.Form):
     )  # These are overwritten
 
     def __init__(self, *args, **kwargs):
-        # Call standard init with the additional kwarg 'object_list'
-        object_list = kwargs.pop("object_list", None)
+        # Call standard init with the additional kwarg 'detected_classes'
+        detected_classes = kwargs.pop("detected_classes", None)
         super(NewCaptchaForm_Details, self).__init__(*args, **kwargs)
         # Extend init
         # Override the selected_object FormField
-        if object_list:
-            self.fields["selected_object"] = forms.ChoiceField(choices=object_list)
+        if detected_classes:
+            self.fields["selected_object"] = forms.ChoiceField(choices=detected_classes)
 
 
 class ImageSliceForm(forms.ModelForm):
