@@ -5,35 +5,35 @@
 
 <div id="centre-div">
 
-
-    <form enctype="multipart/form-data" method="post" action="{% url 'captchapractice:new' %}">
-        {% csrf_token %}
-
-        <table>
-            <tr>
-                <th>{{ upload_form.image.label_tag}}</th>
-                <td>{{ upload_form.image }}</td>
-            </tr>
-            <tr>
-                <td colspan="2" style="padding-bottom: 15px;">
-                    <em class="muted-text">{{ upload_form.image.help_text }}</em></td>
-            </tr>
-            <tr>
-                <th>{{ upload_form.filename.label_tag}}</th>
-                <td>{{ upload_form.filename }}</td>
-            </tr>
-            <tr>
-                <td colspan="2" style="padding-bottom: 15px;">
-                    <em class="muted-text">{{ upload_form.filename.help_text }}</em></td>
-            </tr>
-        </table>
-
-        <input type="submit" value="Next">
-        <p> If its wrong, step into the admin interface to change it</p>
-
-    </form>
-
+    <div class="image-grid" style="--slice-count: {{ img_object.slice_count }};">
+        {% for slice in img_slice_list %}
+        <div class="image">
+            <img class="base-image" src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg"
+                alt="Image {{ slice }}">
+            {% if not slice.element_presence %}
+            <div class="overlay-image-missed"></div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <li>Oops, something went wrong with the submission process. Try again!</li>
+        {% endfor %}
+    </div>
+    <div class="submit-row">
+        <!-- <button type="button" id="feedback-logic">Think its wrong? Click here</button> -->
+        <button type="button" id="next-button">Think its wrong?</button>
+    </div>
 
 </div>
 
 {% endblock content %}
+
+
+{% comment %}
+
+{% elif slice.slice_name in false_negatives %}
+<!-- change color to something more intuitive -->
+<div class="overlay-image-missed"></div>
+{% elif slice.slice_name in true_positives %}
+<div class="overlay-image-correct"></div>
+
+{% endcomment %}

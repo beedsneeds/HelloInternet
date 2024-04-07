@@ -58,7 +58,7 @@ def run_object_detection(filename):
         ]
     """
 
-    model = YOLO("yolov8n-seg.pt")
+    model = YOLO("yolov8l-seg.pt")
     path = os.path.join(
         settings.BASE_DIR,
         "captchapractice",
@@ -118,7 +118,6 @@ def make_image_slices(
         f"{filename}_0{k}" if k <= 9 else f"{filename}_{k}"
         for k in range(1, (slice_count) ** 2 + 1)
     ]
-    print(filename_list)
 
     # 1. Filter & flatten the 4D list to a 2D list. Split into 2 lines for readability.
     #       See run_object_detection to understand how detected_coords is structured.
@@ -153,13 +152,14 @@ def make_image_slices(
 
 def eval_elem_presence(slice_vertices, mask_coords):
     """
-    Input:
+    Example Input:
     slice_vertices = (0, 0, 400, 400)
     mask_coords = [ [330.0, 397.0], [328.0, 399.0], [1067.0, 311.0],.... ]
 
     Output:
     Return True only if atleast {sensitivity_count} points lie within a given square slice.
     {sensitivity_count} serves to avoid false positives for indiscernible overlaps
+    TODO Check for long straight lines that dont have many mask_coords. Else you sacrifice accuracy over sensitivty 
     """
 
     sensitivity_count = 5

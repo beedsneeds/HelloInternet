@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from django.shortcuts import redirect
 
 
 urlpatterns = [
@@ -25,4 +26,6 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("captchapractice/", include("captchapractice.urls")),
     path("", RedirectView.as_view(url="captchapractice/")),
+    # path("", RedirectView.as_view(url="captchapractice/login/")),
+    # path('accounts/login/', lambda request: redirect('captchapractice/login/', permanent=True)),
 ]

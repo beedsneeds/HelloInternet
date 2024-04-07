@@ -82,8 +82,12 @@ class CaptchaImage(models.Model):
 
         return result
 
-    def get_img_slice_list(self, image_id):
-        result = ImageSlice.objects.filter(root_image=image_id)
+    def get_img_slice_list(self, image_id=None, image_name=None):
+        """Arguments: pass either the pk (image_id) or the unique image_name """
+        if image_id:
+            result = ImageSlice.objects.filter(root_image=image_id)
+        elif image_name:
+            result = ImageSlice.objects.filter(root_image__image_name=image_name)
         return result
 
     # class Meta:

@@ -13,6 +13,15 @@ from .utils import validate_image_dimensions, run_object_detection, make_image_s
 
 import json
 
+"""
+TODO 1:1 Validation error reporting
+TODO return if non-unique image_name provided
+TODO not boring prompt list. 'Highlight, pick'
+TODO # V imp test: If slice isn't a 4 elem tuple of ints and if mask isn't a 2 elem nested list of lists
+TODO # handle the logic of 'username & password does not match' and (optional) 'username doesn't exist'
+TODO change to yolo large in production
+
+"""
 
 # These two have to be replaced by generic views.
 def end(request):
@@ -31,14 +40,11 @@ def home(request):
     context = None
     return render(request, "captchapractice/home.html", context)
 
-
-# Start here or you can view the captcha gallery (index) and pick what captcha to solve
-
-
+# TODO: Start here or you can view the captcha gallery (index) and pick what captcha to solve
 # Rename to image index
 # add pagination here
-def index(request):
-    template = loader.get_template("captchapractice/index.html")
+def image_index(request):
+    template = loader.get_template("captchapractice/image_index.html")
 
     captchalist = CaptchaImage.objects.order_by("-difficulty_level")[:15]
     context = {
@@ -113,58 +119,7 @@ def selection(request, image_id):
         return JsonResponse({"error": "Method Not Allowed"}, status=405)
 
 
-def login_view(request):
-    template = loader.get_template("captchapractice/login.html")
-
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return HttpResponseRedirect(reverse("captchapractice:home"))
-
-    login_form = LoginForm()
-    signup_form = SignupForm()
-    # This page houses the signup_form as well. The post request of the signup_form is directly sent to /signup
-    context = {
-        "login_form": login_form,
-        "signup_form": signup_form,
-    }
-    return HttpResponse(template.render(context, request))
-
-
-def signup_view(request):
-    if request.method == "POST":
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data["username"]
-            password1 = form.cleaned_data["password1"]
-            user = authenticate(request, username=username, password=password1)
-            if user is not None:
-                login(request, user)
-            return redirect("captchapractice:home")
-
-    return redirect("captchapractice:login")
-
-
-def logout_view(request):
-    logout(request)
-    return redirect(reverse("captchapractice:home"))
-
-
-"""
-Process 
-
-page 3:
-    - slice images + element presence
-    - link to the finished prompt
-"""
-
-
+@login_required
 def new_captcha(request):
     """
     Page 1 (of 3) of Captcha creation:
@@ -214,7 +169,7 @@ def new_captcha(request):
 
     return HttpResponse(template.render(context, request))
 
-
+@login_required
 def new_captcha_details(request):
     """
     Page 2 (of 3) of Captcha creation:
@@ -226,6 +181,9 @@ def new_captcha_details(request):
     - POST:
         handle form
         create image slices incl. computing element presence
+        load review page (Page 3 (of 3) of Captcha creation)
+            display slice images + element presence
+            link to the finished prompt and to admin for editing
     """
 
     detected_classes = request.session.get("detected_classes")
@@ -246,39 +204,69 @@ def new_captcha_details(request):
                 "difficulty_level"
             ]
             captcha_image.save()
-            # After the image is saved, a post-save signal is sent to signals.py\
+
             make_image_slices(
                 captcha_instance=captcha_image,
                 detected_coords=detected_coords,
                 selected_object=selected_object,
             )
             print("making pizza slices")
+            img_slice_list = captcha_image.get_img_slice_list(image_name=filename)
+
+            context = {
+                "img_object": captcha_image,
+                "img_slice_list": img_slice_list,
+            }
+            template = loader.get_template("captchapractice/new_captcha_review.html")
+            
+            return HttpResponse(template.render(context, request))
+
         else:
             print("form.errors:", details_form.errors)
             print("form.non_field_errors", details_form.non_field_errors)
 
-    # will not be reachable when not testing individual pages
-    template = loader.get_template("captchapractice/new_captcha_details.html")
-    detected_classes = {
-        ("potato", "potato"),
-    }
-    details_form = NewCaptchaForm_Details(detected_classes=detected_classes)
-    context = {
-        "filename": "shikamaru",
-        "details_form": details_form,
-    }
+    print("You don't reach here without going through new_captcha process")
+    return redirect("captchapractice:new")
 
+
+def login_view(request):
+    template = loader.get_template("registration/login.html")
+
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(reverse("captchapractice:home"))
+
+    login_form = LoginForm()
+    signup_form = SignupForm()
+    # This page houses the signup_form as well. The post request of the signup_form is directly sent to /signup
+    context = {
+        "login_form": login_form,
+        "signup_form": signup_form,
+    }
     return HttpResponse(template.render(context, request))
 
 
-def new_captcha_review(request):
-    """
-    TODO 1:1 Validation error reporting
-    TODO return if non-unique image_name provided
-    TODO not boring prompt list. 'Highlight, pick'
-    TODO # V imp test: If slice isn't a 4 elem tuple of ints and if mask isn't a 2 elem nested list of lists
-    TODO # handle the logic of 'username & password does not match' and (optional) 'username doesn't exist'
-    TODO change to yolo large in production
+def signup_view(request):
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data["username"]
+            password1 = form.cleaned_data["password1"]
+            user = authenticate(request, username=username, password=password1)
+            if user is not None:
+                login(request, user)
+            return redirect("captchapractice:home")
 
-    """
-    pass
+    return redirect("captchapractice:login")
+
+
+def logout_view(request):
+    logout(request)
+    return redirect(reverse("captchapractice:home"))
