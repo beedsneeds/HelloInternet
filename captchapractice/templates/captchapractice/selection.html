@@ -17,7 +17,7 @@
 
         <form id="response-form">
             {% csrf_token %}
-
+            
             <div class="image-grid" style="--slice-count: {{ img_object.slice_count }};">
                 {% for slice in img_slice_list %}
                 <div class="image">
@@ -66,6 +66,7 @@
                 <p>{{ evaluation }}</p>
                 <!-- <button type="button" id="feedback-logic">Think its wrong? Click here</button> -->
                 <button type="button" id="next-button">Next</button>
+                <!-- Template filter like 'if in begin, then display next' -->
             </div>
 
         </div>

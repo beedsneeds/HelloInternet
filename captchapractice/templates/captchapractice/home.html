@@ -2,40 +2,50 @@
 {% load static %}
 
 
-
 {% block content %}
 
-<p></p>
+<div class="padding">
 
+    <h5>Hi there!&#x1F44B;</h5>
+    <p>
+        On this site, you can choose to <a href="{% url 'captchapractice:new' %}">create</a> your own captcha
+        or <a href="{% url 'captchapractice:begin' %}">solve</a> a series of 4 captcha prompts.
 
+        {% if user.is_authenticated %}
+        <br>
+        Logged in as <strong>{{ user.get_username }}</strong><br>
+    </p>
+    {% else %}
+    <br>
+    Before you start, please
+    <a href="{% url 'captchapractice:login' %}?next={{ request.path }}">log in</a>.
+    We keep a track of all your solved captcha so you don't encounter the same prompts in successive games.
+    </p>
+    {% endif %}
 
-<p>You'll face a series of 4 captcha challenges</p>
+    <hr>
+    <h5> A Primer on Captcha</h5>
+    <p>
+        Websites implement security measures to safeguard against fraud and abuse by distinguishing between human users
+        and
+        automated bots. Google's reCAPTCHA v2 incorporates an invisible reCAPTCHA as its base layer, which automatically
+        analyzes user actions (mouse movements, keyboard inputs, human-like patterns, and signals) to determine the
+        likelihood of the user being human.
+        <br><br>
+        If the system is uncertain if the user is human, it presents additional verification challenges. One such
+        challenge
+        involves selecting images based on a specific prompt, such as "select all images with cars" or "select all
+        images
+        containing street signs."
+    </p>
 
-{% if user.is_authenticated %}
-<p>Logged in as: <strong>{{ user.get_username }}</strong><br></p>
-<p>You can go ahead and start your
-    <a href="{% url 'captchapractice:begin' %}" class="button-link">challenge</a>
-</p>
+    <hr>
 
-{% else %}
-<p>
-    Please
-    <a href="{% url 'captchapractice:login' %}?next={{ request.path }}" class="line2">log in</a>
-    to continue. We keep a track of your responses to not give you the same prompts in successive games.
-</p>
+    <p> For more information,
+        check out the <a href="https://github.com/beedsneeds/HelloInternet/blob/main/README.md">readme</a> on GitHub.
+    </p>
 
-{% endif %}
-
-
-
-<hr>
-
-
-<p> Feel like you're being thrown into a barebones site without any context?
-    Check out the <a href="https://github.com/beedsneeds/HelloInternet/blob/main/README.md">readme</a> on GitHub.</p>
-
-
-
+</div>
 
 
 {% endblock %}

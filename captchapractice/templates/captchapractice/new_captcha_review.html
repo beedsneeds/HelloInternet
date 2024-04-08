@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block content %}
+
+<div id="centre-div">
+
+    <h5><b>New Captcha (page 3 of 3)</b></h5>
+    <br>
+
+    <p>The darkened image segments do not contain the object you chose. Follow the
+        <br> link at the bottom to see how other users see your captcha.
+    </p>
+
+    <div class="image-grid" style="--slice-count: {{ img_object.slice_count }};">
+        {% for slice in img_slice_list %}
+        <div class="image">
+            <img class="base-image" src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg"
+                alt="Image {{ slice }}">
+            {% if not slice.element_presence %}
+            <div class="overlay-image-missed"></div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <li>Oops, something went wrong with the submission process. Try again!</li>
+        {% endfor %}
+    </div>
+
+    <form method="post" action="{% url 'captchapractice:newtwo' %}">
+        {% csrf_token %}
+
+        <div class="submit-row">
+            <a href="{% url 'captchapractice:selection' image_id=img_object.pk %}">Solve your captcha here</a>
+        </div>
+    </form>
+
+</div>
+
+{% endblock content %}
+
+
+{% comment %}
+
+<a href="">Report an error with the generated solution</a>
+
+{% endcomment %}

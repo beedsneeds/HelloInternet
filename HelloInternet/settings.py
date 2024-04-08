@@ -107,7 +107,6 @@ if "DATABASE_URL" in os.environ:
 
 # Password validation - turning this off because its overkill for this app
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
 # AUTH_PASSWORD_VALIDATORS = [
 #     {
 #         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -156,6 +155,10 @@ MEDIA_ROOT = BASE_DIR / "captchapractice/media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = "/captchapractice/"
+LOGIN_URL = "/captchapractice/login/"
+# The @login_required decorator checks all template_dirs and will load the html without 
+# loading the required form
+# Merely using RedirectView.as_view in urls 
+# LOGIN_REDIRECT_URL = "/captchapractice/"
 # only applies when logging in through /accounts/login/. When clicking on any log in link,
 #   it will redirect you back to the original page

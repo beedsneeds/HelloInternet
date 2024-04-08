@@ -72,6 +72,10 @@ body {
     /* Smooth color transition */
 }
 
+.padding {
+    padding: 20px;
+}
+
 /* L-R split container */
 
 .l-r-container {
@@ -140,7 +144,9 @@ a:hover {
     text-decoration: underline;
     /* Underline on hover */
 }
-
+a {
+    color: rgba(0, 96, 96, 0.93);
+}
 li {
     padding-bottom: 10px;
     /* Add padding between list items */
@@ -148,8 +154,9 @@ li {
 }
 
 .muted-text {
-    opacity: 0.4;
+    opacity: 0.7;
 }
+
 
 #import-content {
     display: flex;
@@ -182,7 +189,6 @@ li {
     padding: 20px;
 
 }
-
 
 
 /* image grid behaviour*/
@@ -274,7 +280,7 @@ li {
     height: 100%;
 
     position: absolute;
-    background-color: rgb(193, 87, 0);
+    background-color: rgb(239, 58, 58);
     opacity: 0.5;
 }
 .overlay-image-missed {
@@ -284,8 +290,8 @@ li {
     height: 100%;
 
     position: absolute;
-    background-color: rgb(69, 69, 69);
-    opacity: 0.5;
+    background-color: rgb(39, 38, 38);
+    opacity: 0.7;
 }
 
 .submit-row {
@@ -298,4 +304,8 @@ li {
 
 #next-button {
     margin-left: auto;
+}
+
+.right-align {
+    text-align: right;
 }
