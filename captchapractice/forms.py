@@ -32,14 +32,20 @@ class NewCaptchaForm_Details(forms.Form):
         (4, "4x4 Grid"),
         (5, "5x5 Grid"),
     ]
-    slice_count = forms.ChoiceField(choices=SLICE_CHOICES)
+    slice_count = forms.ChoiceField(
+        choices=SLICE_CHOICES,
+        help_text="Determines the grid layout of the created captcha.",
+    )
 
     DIFFICULTY = [
         (1, "Easy"),
         (2, "Medium"),
         (3, "Hard"),
     ]
-    difficulty_level = forms.ChoiceField(choices=DIFFICULTY)
+    difficulty_level = forms.ChoiceField(
+        choices=DIFFICULTY,
+        help_text="Plays a role in determining the order of captchas presented during a challenge set",
+    )
 
     selected_object = forms.ChoiceField(
         choices=[("a", "b"), ("c", "d")]

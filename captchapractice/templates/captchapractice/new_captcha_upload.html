@@ -5,11 +5,14 @@
 
 <div id="centre-div">
 
-    {% if upload_form.errors %}
-    <p>The image does not have 1:1 dimensions. Please try again.</p>
-    <div style="color: red;">{{ error }}</div>
+    <h5><b>New Captcha (page 1 of 3)</b></h5>
+    <br>
 
-    {% endif %}
+    {% for error in form_errors %}
+    <div style="color: red;">{{ error }}</div>
+    {% empty %}
+
+    {% endfor %}
 
     <form enctype="multipart/form-data" method="post" action="{% url 'captchapractice:new' %}">
         {% csrf_token %}
@@ -35,10 +38,18 @@
             </tr>
         </table>
 
-        <input type="submit" value="Next">
-        <p> It'll take a while after htting Submit button</p>
+
+        <div class="submit-row">
+            <input type="submit" value="Submit">
+        </div>
 
     </form>
+
+    <p> <b>Note:</b> It takes a few seconds to load the next page as
+        <br> the object detection model continues to run in the background.</p>
+    
+
+    
 
 
 </div>

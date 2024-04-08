@@ -5,7 +5,9 @@
 
 <div id="centre-div">
 
-    <p> page two.</p>
+    <h5><b>New Captcha (page 2 of 3)</b></h5>
+    <br>
+
     <div class="image-grid">
         <img class="base-image" src="{% static 'captchapractice/images/prompt candidates/' %}{{ filename }}_yolo.jpg"
             alt="{{ filename }}_yolo.jpg">
@@ -49,11 +51,15 @@
             </tr>
         </table>
 
-        <input type="submit" value="Next">
-    </form>
-    <p>Is there an object detection error?</p>
-    <button type="button">Write here</button>
+        <div class="submit-row">
+            <input type="submit" value="Submit">
+        </div>
 
+    </form>
+
+
+
+ 
 
 </div>
 
@@ -61,23 +67,7 @@
 
 {% comment %}
 
-{{ details_form.as_p }}
+<a href="">Report an object detection error</a>
 
-
-<tr>
-    <td colspan="2" style="padding-bottom: 15px;">
-        <em class="muted-text"></em>
-    </td>
-</tr>
-<tr>
-    <th>{{ details_form.image_name.label_tag}}</th>
-    <td>{{ details_form.image_name }}</td>
-</tr>
-
-
-<tr>
-    <th>The prompt will read:</th>
-    <td> Select the {{ details_form.selected_object }} in the image.</td>
-</tr>
 
 {% endcomment %}

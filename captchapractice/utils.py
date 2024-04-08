@@ -9,7 +9,7 @@ from itertools import product
 from .models import ImageSlice, CaptchaImage
 
 
-# CHAAAANGE TO large    model = YOLO("yolov8l-seg.pt") when in production but to nano    model = YOLO("yolov8n-seg.pt")
+# TODO change TO large    model = YOLO("yolov8l-seg.pt") when in production but to nano    model = YOLO("yolov8n-seg.pt")
 
 
 def validate_image_dimensions(image, filename):
@@ -58,7 +58,7 @@ def run_object_detection(filename):
         ]
     """
 
-    model = YOLO("yolov8l-seg.pt")
+    model = YOLO("yolov8m-seg.pt")
     path = os.path.join(
         settings.BASE_DIR,
         "captchapractice",
@@ -152,23 +152,28 @@ def make_image_slices(
 
 def eval_elem_presence(slice_vertices, mask_coords):
     """
-    Example Input:
-    slice_vertices = (0, 0, 400, 400)
-    mask_coords = [ [330.0, 397.0], [328.0, 399.0], [1067.0, 311.0],.... ]
+    Args Format:
+    slice_vertices is a 4-tuple like (0, 0, 400, 400)
+    mask_coords is a nested list with each list item being a 2-int xy point
+        [ [330.0, 397.0], [328.0, 399.0], [1067.0, 311.0],.... ]
 
     Output:
     Return True only if atleast {sensitivity_count} points lie within a given square slice.
     {sensitivity_count} serves to avoid false positives for indiscernible overlaps
-    TODO Check for long straight lines that dont have many mask_coords. Else you sacrifice accuracy over sensitivty 
     """
 
     sensitivity_count = 5
-    for point in mask_coords:
-        # check x-coord overlap
+    for i, point in enumerate(mask_coords):
+        # Check x-coord overlap
         if slice_vertices[0] <= point[0] <= slice_vertices[2]:  
-            # check y-coord overlap
+            # Check y-coord overlap
             if (slice_vertices[1] <= point[1] <= slice_vertices[3]):  
                 sensitivity_count -= 1
-        if sensitivity_count == 0:
+                # Tests for mask coords that consist of long straight lines.
+                # Such masks dont have as many points as curves do
+                # Avoids the need choose between accuracy and sensitivty
+                if point[0] == mask_coords[i-1][0] or point[1] == mask_coords[i-1][1]:
+                    sensitivity_count -= 4
+        if sensitivity_count <= 0:
             return 1
     return 0

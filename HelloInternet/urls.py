@@ -26,6 +26,4 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("captchapractice/", include("captchapractice.urls")),
     path("", RedirectView.as_view(url="captchapractice/")),
-    # path("", RedirectView.as_view(url="captchapractice/login/")),
-    # path('accounts/login/', lambda request: redirect('captchapractice/login/', permanent=True)),
 ]

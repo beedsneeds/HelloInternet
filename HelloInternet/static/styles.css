@@ -72,6 +72,10 @@ body {
     /* Smooth color transition */
 }
 
+.padding {
+    padding: 20px;
+}
+
 /* L-R split container */
 
 .l-r-container {
@@ -140,7 +144,9 @@ a:hover {
     text-decoration: underline;
     /* Underline on hover */
 }
-
+a {
+    color: rgba(0, 96, 96, 0.93);
+}
 li {
     padding-bottom: 10px;
     /* Add padding between list items */
@@ -148,7 +154,7 @@ li {
 }
 
 .muted-text {
-    opacity: 0.6;
+    opacity: 0.7;
 }
 
 
@@ -183,7 +189,6 @@ li {
     padding: 20px;
 
 }
-
 
 
 /* image grid behaviour*/
@@ -299,4 +304,8 @@ li {
 
 #next-button {
     margin-left: auto;
+}
+
+.right-align {
+    text-align: right;
 }

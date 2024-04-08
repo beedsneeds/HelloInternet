@@ -14,39 +14,26 @@ from .utils import validate_image_dimensions, run_object_detection, make_image_s
 import json
 
 """
-TODO 1:1 Validation error reporting
-TODO return if non-unique image_name provided
 TODO not boring prompt list. 'Highlight, pick'
 TODO # V imp test: If slice isn't a 4 elem tuple of ints and if mask isn't a 2 elem nested list of lists
-TODO # handle the logic of 'username & password does not match' and (optional) 'username doesn't exist'
-TODO change to yolo large in production
-
+TODO # handle the display of 'username & password does not match' and (optional) 'username doesn't exist'
+TODO automatically delete those models that don't have corresponding images in prompt candidates
+TODO: handle additional form validation in forms.py through clean() 
+        # but how do I send across request.FILES["image"]? Maybe through form __init__
 """
 
-# These two have to be replaced by generic views.
-def end(request):
-    template = loader.get_template("captchapractice/end.html")
-    context = {}
-    return HttpResponse(template.render(context, request))
-
-
-def empty(request):
-    template = loader.get_template("captchapractice/empty.html")
-    context = {}
-    return HttpResponse(template.render(context, request))
 
 
 def home(request):
     context = None
     return render(request, "captchapractice/home.html", context)
 
-# TODO: Start here or you can view the captcha gallery (index) and pick what captcha to solve
-# Rename to image index
-# add pagination here
 def image_index(request):
     template = loader.get_template("captchapractice/image_index.html")
 
-    captchalist = CaptchaImage.objects.order_by("-difficulty_level")[:15]
+    # add pagination here
+    # captchalist = CaptchaImage.objects.order_by("-difficulty_level")[:15]
+    captchalist = CaptchaImage.objects.order_by("-difficulty_level")
     context = {
         "captchalist": captchalist,
     }
@@ -136,11 +123,14 @@ def new_captcha(request):
         upload_form = NewCaptchaForm_Upload(request.POST, request.FILES)
 
         if upload_form.is_valid():
+            form_errors = []
+
             filename = upload_form.cleaned_data["filename"]
-            result = validate_image_dimensions(
+            dim_correct = validate_image_dimensions(
                 image=request.FILES["image"], filename=filename
             )
-            if result is True:
+            name_unique = not CaptchaImage.objects.filter(image_name=filename).exists()
+            if dim_correct and name_unique:
                 detected_coords, detected_classes = run_object_detection(filename)
 
                 request.session["detected_classes"] = detected_classes
@@ -157,17 +147,31 @@ def new_captcha(request):
                 }
 
                 return HttpResponse(template.render(context, request))
+            else:
+                if not dim_correct:
+                    form_errors.append("The image does not have 1:1 dimensions. Please try again.")
+                if not name_unique:
+                    form_errors.append("This filename is already taken, pick a new one.")
+                upload_form = NewCaptchaForm_Upload(request.POST, request.FILES)
+                context = {
+                    "upload_form": upload_form,
+                    "form_errors": form_errors,
+                }
         else:
+            # TODO: merge the above form.errors with these
             print("form.errors:", upload_form.errors)
             print("form.non_field_errors", upload_form.non_field_errors)
 
-    upload_form = NewCaptchaForm_Upload()
+    else: 
+        upload_form = NewCaptchaForm_Upload()
+        context = {
+            "upload_form": upload_form,
+        }
+
     template = loader.get_template("captchapractice/new_captcha_upload.html")
-    context = {
-        "upload_form": upload_form,
-    }
 
     return HttpResponse(template.render(context, request))
+
 
 @login_required
 def new_captcha_details(request):
@@ -225,8 +229,21 @@ def new_captcha_details(request):
             print("form.errors:", details_form.errors)
             print("form.non_field_errors", details_form.non_field_errors)
 
-    print("You don't reach here without going through new_captcha process")
+    print("You can't reach here without going through new_captcha process")
     return redirect("captchapractice:new")
+
+
+# These two have to be replaced by generic views.
+def end(request):
+    template = loader.get_template("captchapractice/end.html")
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+def empty(request):
+    template = loader.get_template("captchapractice/empty.html")
+    context = {}
+    return HttpResponse(template.render(context, request))
 
 
 def login_view(request):
