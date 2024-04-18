@@ -127,23 +127,24 @@ class UserResponses(models.Model):
     def evaluate_response(correct_choices, selected_choices):
         selected = set(selected_choices)
         correct = set(correct_choices)
+        evaluation = dict()
 
         # Members that are 'correct' in the traditional sense (they occur in both sets) i.e. set intersection
-        true_positives = correct & selected
+        evaluation["true_positives"] = correct & selected
         # Members that were wrong. That is, those that were not 'correct' but were selected nonetheless
-        false_postives = selected - correct
+        evaluation["false_postives"] = selected - correct
         # Members that were 'correct' but weren't selected
-        false_negatives = correct - selected
+        evaluation["false_negatives"] = correct - selected
 
         # Testing for set equality (both sets have the same elements)
         if selected == correct:
-            evaluation = "You are correct!"
-        elif len(false_negatives) > 0 and len(false_postives) == 0:
-            evaluation = "Uh-oh! You missed an image or two."
+            evaluation["text"] = "You are correct!"
+        elif len(evaluation["false_negatives"]) > 0:
+            evaluation["text"] = "Uh-oh! You missed an image or two."
         else:
-            evaluation = "Oops, you got it wrong!"
+            evaluation["text"] = "Oops, you got it wrong!"
 
-        return (evaluation, true_positives, false_postives, false_negatives)
+        return evaluation
 
 
 # This is a class-less method

@@ -14,19 +14,18 @@ from .utils import validate_image_dimensions, run_object_detection, make_image_s
 import json
 
 """
-TODO not boring prompt list. 'Highlight, pick'
-TODO # V imp test: If slice isn't a 4 elem tuple of ints and if mask isn't a 2 elem nested list of lists
 TODO # handle the display of 'username & password does not match' and (optional) 'username doesn't exist'
 TODO automatically delete those models that don't have corresponding images in prompt candidates
-TODO: handle additional form validation in forms.py through clean() 
-        # but how do I send across request.FILES["image"]? Maybe through form __init__
+TODO: handle additional form validation in forms.py through clean() rather than in views
+    # but how do I send across request.FILES["image"]? Maybe through form __init__ then clean(arg)
+    
 """
-
 
 
 def home(request):
     context = None
     return render(request, "captchapractice/home.html", context)
+
 
 def image_index(request):
     template = loader.get_template("captchapractice/image_index.html")
@@ -79,20 +78,12 @@ def selection(request, image_id):
         response.save()
 
         correct_choices = img_object.correct_choices(image_id=image_id)
-        (
-            evaluation,
-            true_positives,
-            false_postives,
-            false_negatives,
-        ) = UserResponses.evaluate_response(correct_choices, selected_choices)
+        evaluation = UserResponses.evaluate_response(correct_choices, selected_choices)
 
         context = {
             "img_slice_list": img_slice_list,
             "img_object": img_object,
             "evaluation": evaluation,
-            "true_positives": true_positives,
-            "false_postives": false_postives,
-            "false_negatives": false_negatives,
         }
 
         # The view processes the post request and the corresponding response has to be loaded asynchronously.
@@ -229,7 +220,7 @@ def new_captcha_details(request):
             print("form.errors:", details_form.errors)
             print("form.non_field_errors", details_form.non_field_errors)
 
-    print("You can't reach here without going through new_captcha process")
+    # Can't be reached without going through new_captcha process
     return redirect("captchapractice:new")
 
 

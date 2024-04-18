@@ -49,12 +49,12 @@
                 <div class="image">
                     <img class="base-image" src="{% static 'captchapractice/images/prompts/' %}{{ slice }}.jpg"
                         alt="Image {{ slice }}">
-                    {% if slice.slice_name in false_postives %}
+                    {% if slice.slice_name in evaluation.false_postives %}
                     <div class="overlay-image-wrong"></div>
-                    {% elif slice.slice_name in false_negatives %}
+                    {% elif slice.slice_name in evaluation.false_negatives %}
                     <!-- change color to something more intuitive -->
                     <div class="overlay-image-missed"></div>
-                    {% elif slice.slice_name in true_positives %}
+                    {% elif slice.slice_name in evaluation.true_positives %}
                     <div class="overlay-image-correct"></div>
                     {% endif %}
                 </div>
@@ -63,7 +63,7 @@
                 {% endfor %}
             </div>
             <div class="submit-row">
-                <p>{{ evaluation }}</p>
+                <p>{{ evaluation.text }}</p>
                 <!-- <button type="button" id="feedback-logic">Think its wrong? Click here</button> -->
                 <button type="button" id="next-button">Next</button>
                 <!-- Template filter like 'if in begin, then display next' -->
@@ -78,6 +78,7 @@
 
 
 {% comment %}
+
 
 
 {% endcomment %}
