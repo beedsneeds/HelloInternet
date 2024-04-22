@@ -4,7 +4,7 @@
 
 Auto-generate captcha based on your own images and solve the ones the community creates! 
 
-The project is live on [render](https://hellointernet.onrender.com/captchapractice/). The website will take upto 50 seconds to wake up since Render spins down any of its websites that goes 15 minutes without receiving inbound traffic.
+The project is live on [render](https://hellointernet.onrender.com/captchapractice/).
 
 Runs the [YOLO8](https://github.com/ultralytics/ultralytics/) segmentation model to identify objects and provide customization options during the captcha creation process. 
 
