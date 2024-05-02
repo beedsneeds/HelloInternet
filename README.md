@@ -22,10 +22,6 @@ Users are presented with a series of four captchas, each progressively more chal
 
 ---
 
-#### Design Documentation
-
----
-
 <details>
     <summary><h3>Future Work</h3></summary>
     <li>
