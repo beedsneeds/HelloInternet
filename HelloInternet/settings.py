@@ -55,11 +55,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "debug_toolbar",
+    "pympler",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -171,3 +174,12 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+# For django-debug toolbar
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+DEBUG_TOOLBAR_PANELS = (
+    # 'debug_toolbar.panels.timer.TimerDebugPanel',
+    'pympler.panels.MemoryPanel',
+    )

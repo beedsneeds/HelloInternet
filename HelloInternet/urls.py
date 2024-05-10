@@ -25,4 +25,6 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("captchapractice/", include("captchapractice.urls")),
     path("", RedirectView.as_view(url="captchapractice/")),
+    path("__debug__/", include("debug_toolbar.urls")),
+
 ]

@@ -41,6 +41,7 @@ def validate_image_dimensions(image, filename):
     # Conversion to .jpg accomplished by converting to RGB channel & using the .jpg extension
     out = os.path.join(out_path, f"{filename}.jpg")
     pre_img.save(out)
+    pre_img.close()
     return True
 
 
@@ -58,7 +59,7 @@ def run_object_detection(filename):
         ]
     """
 
-    model = YOLO("yolov8m-seg.pt")
+    model = YOLO("yolov8n-seg.pt")
     path = os.path.join(
         settings.BASE_DIR,
         "captchapractice",
@@ -148,6 +149,7 @@ def make_image_slices(
             slice_name=filename_list[index],
             element_presence=element_presence,
         )
+    img.close()
 
 
 def eval_elem_presence(slice_vertices, mask_coords):

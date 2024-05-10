@@ -44,6 +44,7 @@ def image_index(request):
 
 @login_required
 def begin(request):
+    
     template = loader.get_template("captchapractice/begin.html")
 
     user = get_user(request)
