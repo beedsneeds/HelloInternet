@@ -179,7 +179,9 @@ REST_FRAMEWORK = {
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+# delete this tuple if you don't want to see memory usage data & want to go back to debug toolbar defaults
 DEBUG_TOOLBAR_PANELS = (
     # 'debug_toolbar.panels.timer.TimerDebugPanel',
     'pympler.panels.MemoryPanel',
     )
+
