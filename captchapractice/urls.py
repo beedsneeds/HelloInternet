@@ -1,9 +1,12 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from rest_framework import routers
 
 from django.conf import settings
 from django.conf.urls.static import static
 
+router = routers.DefaultRouter()
+router.register(r'captcha', views.CaptchaImageViewSet)
 
 app_name = "captchapractice"
 urlpatterns = [
@@ -18,6 +21,8 @@ urlpatterns = [
     path("empty/", views.empty, name="empty"),
     path("new/", views.new_captcha, name="new"),
     path("newtwo/", views.new_captcha_details, name="newtwo"),
+    path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -11,6 +11,9 @@ from .forms import SignupForm, LoginForm, NewCaptchaForm_Upload, NewCaptchaForm_
 
 from .utils import validate_image_dimensions, run_object_detection, make_image_slices
 
+from .serializers import CaptchaImageSerializer
+from rest_framework import permissions, viewsets
+
 import json
 
 """
@@ -18,7 +21,7 @@ TODO # handle the display of 'username & password does not match' and (optional)
 TODO automatically delete those models that don't have corresponding images in prompt candidates
 TODO: handle additional form validation in forms.py through clean() rather than in views
     # but how do I send across request.FILES["image"]? Maybe through form __init__ then clean(arg)
-    
+TODO: line 76 in utils:     output_xy = output[0].masks.xy assumes atleast one object will be detected. Handle the edge case
 """
 
 
@@ -278,3 +281,8 @@ def signup_view(request):
 def logout_view(request):
     logout(request)
     return redirect(reverse("captchapractice:home"))
+
+class CaptchaImageViewSet(viewsets.ModelViewSet):
+    queryset = CaptchaImage.objects.all().order_by('-difficulty_level')
+    serializer_class = CaptchaImageSerializer
+    # permission_classes = [permissions.IsAuthenticated]

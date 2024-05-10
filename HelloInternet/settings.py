@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -162,3 +163,11 @@ LOGIN_URL = "/captchapractice/login/"
 # LOGIN_REDIRECT_URL = "/captchapractice/"
 # only applies when logging in through /accounts/login/. When clicking on any log in link,
 #   it will redirect you back to the original page
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
