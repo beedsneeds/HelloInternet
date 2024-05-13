@@ -14,11 +14,11 @@ from .utils import validate_image_dimensions, run_object_detection, make_image_s
 from .serializers import CaptchaImageSerializer
 from rest_framework import permissions, viewsets
 
-import json
+import json, gc
 
 """
 TODO # handle the display of 'username & password does not match' and (optional) 'username doesn't exist'
-TODO automatically delete those models that don't have corresponding images in prompt candidates
+TODO automatically delete those models that don't have corresponding images in prompt candidates and vice versa
 TODO: handle additional form validation in forms.py through clean() rather than in views
     # but how do I send across request.FILES["image"]? Maybe through form __init__ then clean(arg)
 TODO: line 76 in utils:     output_xy = output[0].masks.xy assumes atleast one object will be detected. Handle the edge case
@@ -27,6 +27,7 @@ TODO: line 76 in utils:     output_xy = output[0].masks.xy assumes atleast one o
 
 def home(request):
     context = None
+    gc.collect()
     return render(request, "captchapractice/home.html", context)
 
 
@@ -39,6 +40,7 @@ def image_index(request):
     context = {
         "captchalist": captchalist,
     }
+    gc.collect()
     return HttpResponse(template.render(context, request))
 
 
@@ -52,6 +54,7 @@ def begin(request):
     context = {
         "captcha_order": captcha_order,
     }
+    gc.collect()
     return HttpResponse(template.render(context, request))
 
 
@@ -66,6 +69,7 @@ def selection(request, image_id):
             "img_slice_list": img_slice_list,
             "img_object": img_object,
         }
+        gc.collect()
         return HttpResponse(template.render(context, request))
 
     elif request.method == "POST":
@@ -95,6 +99,7 @@ def selection(request, image_id):
         rendered_template = loader.render_to_string(
             "captchapractice/selection.html", context, request
         )
+        gc.collect()
         return JsonResponse({"html": rendered_template})
 
     else:
@@ -140,7 +145,7 @@ def new_captcha(request):
                     "filename": filename,
                     "details_form": details_form,
                 }
-
+                gc.collect()    
                 return HttpResponse(template.render(context, request))
             else:
                 if not dim_correct:
@@ -152,6 +157,7 @@ def new_captcha(request):
                     "upload_form": upload_form,
                     "form_errors": form_errors,
                 }
+
         else:
             # TODO: merge the above form.errors with these
             print("form.errors:", upload_form.errors)
@@ -164,7 +170,7 @@ def new_captcha(request):
         }
 
     template = loader.get_template("captchapractice/new_captcha_upload.html")
-
+    gc.collect()
     return HttpResponse(template.render(context, request))
 
 
@@ -217,7 +223,7 @@ def new_captcha_details(request):
                 "img_slice_list": img_slice_list,
             }
             template = loader.get_template("captchapractice/new_captcha_review.html")
-            
+            gc.collect()
             return HttpResponse(template.render(context, request))
 
         else:
