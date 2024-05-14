@@ -21,7 +21,7 @@ TODO # handle the display of 'username & password does not match' and (optional)
 TODO automatically delete those models that don't have corresponding images in prompt candidates and vice versa
 TODO: handle additional form validation in forms.py through clean() rather than in views
     # but how do I send across request.FILES["image"]? Maybe through form __init__ then clean(arg)
-TODO: line 76 in utils:     output_xy = output[0].masks.xy assumes atleast one object will be detected. Handle the edge case
+TODO: line 76 in utils: output_xy = output[0].masks.xy assumes atleast one object will be detected. Handle the edge case
 """
 
 
