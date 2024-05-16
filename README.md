@@ -4,7 +4,10 @@
 
 Auto-generate captcha based on your own images and solve the ones the community creates! 
 
-The project is live on [render](https://hellointernet.onrender.com/captchapractice/).
+The project is live on [render](https://hellointernet.onrender.com/captchapractice/). If the project faces any technical snags, find a demo [here](https://drive.google.com/file/d/1FzZbE_xZsQFz5smhbt95IEFAVouOPXU9/view?usp=sharing).
+I'll shortly be turning this into an api-only server and build a [frontend](https://github.com/beedsneeds/captcha-generator/) around it.
+
+
 
 Runs the [YOLO8](https://github.com/ultralytics/ultralytics/) segmentation model to identify objects and provide customization options during the captcha creation process. 
 
