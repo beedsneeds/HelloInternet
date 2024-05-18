@@ -62,6 +62,7 @@ def begin(request):
 def selection(request, image_id):
     img_object = get_object_or_404(CaptchaImage, pk=image_id)
     img_slice_list = img_object.get_img_slice_list(image_id=image_id)
+    temp = img_object.api_get_img_slice_list_as_json()
 
     if request.method == "GET":
         template = loader.get_template("captchapractice/selection.html")

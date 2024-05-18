@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 
 from random import sample
+from django.core import serializers
 
 
 # delete when porting to new DB
@@ -79,7 +80,6 @@ class CaptchaImage(models.Model):
             .filter(element_presence=1)
             .values_list("slice_name", flat=True)
         )
-
         return result
 
     def get_img_slice_list(self, image_id=None, image_name=None):
@@ -89,6 +89,15 @@ class CaptchaImage(models.Model):
         elif image_name:
             result = ImageSlice.objects.filter(root_image__image_name=image_name)
         return result
+    
+    # separate function because the serializer source tag requires only self args
+    # When refactoring to make this purely back end, replace all the function calls 
+    # of the above
+    def api_get_img_slice_list_as_json(self):
+        intermediate = ImageSlice.objects.filter(root_image=self.id).values("slice_name", "element_presence")
+        # result = serializers.serialize('json', intermediate)
+        return intermediate
+
 
     # class Meta:
     #     ordering = ['-difficulty_level']
