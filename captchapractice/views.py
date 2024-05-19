@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.urls import reverse
 from django.template import loader
 
@@ -12,7 +12,10 @@ from .forms import SignupForm, LoginForm, NewCaptchaForm_Upload, NewCaptchaForm_
 from .utils import validate_image_dimensions, run_object_detection, make_image_slices
 
 from .serializers import CaptchaImageSerializer
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, renderers
+from rest_framework.views import APIView
+from rest_framework.response import Response as APIResponse
+from rest_framework.decorators import action
 
 import json, gc
 
@@ -291,6 +294,11 @@ def logout_view(request):
     return redirect(reverse("captchapractice:home"))
 
 class CaptchaImageViewSet(viewsets.ModelViewSet):
-    queryset = CaptchaImage.objects.all().order_by('-difficulty_level')
+    queryset = CaptchaImage.objects.all()
     serializer_class = CaptchaImageSerializer
     # permission_classes = [permissions.IsAuthenticated]
+    
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def slice_list(self, request, *args, **kwargs):
+        img_object = self.get_object()
+        return APIResponse(img_object.prompt_text)

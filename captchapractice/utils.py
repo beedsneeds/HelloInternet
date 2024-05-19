@@ -142,7 +142,9 @@ def make_image_slices(
             mask_coords=mask_coords,
         )
         img.crop(slice_vertices).save(
-            os.path.join(out_path, f"{filename_list[index]}.jpg")
+            os.path.join(out_path, f"{filename_list[index]}.jpg"),
+            optimize=True, 
+            quality=95
         )
         ImageSlice.objects.create(
             root_image=captcha_instance,

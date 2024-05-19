@@ -73,7 +73,7 @@ class CaptchaImage(models.Model):
 
     def get_absolute_url(self):
         return reverse("captchapractice:selection", args=[str(self.id)])
-
+ 
     def correct_choices(self, image_id):
         result = list(
             ImageSlice.objects.filter(root_image=image_id)
