@@ -9,7 +9,6 @@ from itertools import product
 from .models import ImageSlice, CaptchaImage
 
 
-# TODO change TO large    model = YOLO("yolov8l-seg.pt") when in production but to nano    model = YOLO("yolov8n-seg.pt")
 
 
 def validate_image_dimensions(image, filename):
